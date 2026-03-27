@@ -70,6 +70,22 @@ const Dashboard = () => {
 
   const { summary, metrics, insights, projects, productivity, alerts } = data;
 
+  const handleInsightAction = async (id, actionType) => {
+    try {
+      setLoading(true);
+      await fetch(`http://localhost:5000/api/insights/${id}/action`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ actionType })
+      });
+      await fetchData();
+    } catch (err) {
+      console.error('Error performing insight action:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const navMonth = (direction) => {
     const newDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + direction, 1);
     setViewDate(newDate);
@@ -209,9 +225,12 @@ const Dashboard = () => {
                       </div>
                       <div className="flex flex-col items-end shrink-0 gap-2">
                          <span className={`px-2.5 py-1 ${insight.severity === 'High Risk' ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'} text-[9px] font-black uppercase tracking-widest rounded-lg`}>{insight.severity}</span>
-                         <div className="text-[11px] font-black text-blue-600 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                         <button 
+                            onClick={() => handleInsightAction(insight.id, insight.severity === 'High Risk' ? 'fix' : 'delegate')}
+                            className="text-[11px] font-black text-blue-600 flex items-center gap-1 group-hover:translate-x-1 transition-transform cursor-pointer hover:underline"
+                         >
                             {insight.actionLabel} <ArrowRight size={12} strokeWidth={3} />
-                         </div>
+                         </button>
                       </div>
                     </div>
                   ))}

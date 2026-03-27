@@ -337,6 +337,32 @@ app.get('/api/dashboard', async (req, res) => {
   }
 });
 
+// Insight Actions
+app.post('/api/insights/:id/action', async (req, res) => {
+  try {
+    const { actionType } = req.body;
+    const insight = await DashboardInsight.findByPk(req.params.id);
+    if (!insight) return res.status(404).json({ error: 'Insight not found' });
+
+    if (actionType === 'delegate') {
+      // Logic for delegation: Create a task
+      // In a real app we'd get specific member and project from insight or body
+      const project = await Project.findOne();
+      await Task.create({
+        title: insight.title.replace('Delegate ', ''),
+        status: 'Active Sprint',
+        ProjectId: project?.id
+      });
+    }
+
+    // Always remove the insight after action is taken
+    await insight.destroy();
+    res.json({ message: 'Action processed successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Start Server
 const PORT = process.env.PORT || 5000;
 sequelize.authenticate()
