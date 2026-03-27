@@ -94,7 +94,7 @@ const MeetingSummaries = () => {
                       "Design team presented the **Editorial UI** concept; stakeholders approved the move toward a cleaner, line-free aesthetic."
                     ].map((point, i) => (
                       <li key={i} className="flex gap-6 group items-start">
-                        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-indigo-600 font-bold text-xs shadow-sm ring-1 ring-slate-100 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                        <span className="shrink-0 w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-indigo-600 font-bold text-xs shadow-sm ring-1 ring-slate-100 group-hover:bg-indigo-600 group-hover:text-white transition-all">
                           {i + 1}
                         </span>
                         <p className="text-[15px] text-slate-600 leading-relaxed pt-1"
@@ -166,52 +166,51 @@ const MeetingSummaries = () => {
                   </div>
                 </div>
 
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left">
-                    <thead>
-                      <tr className="border-b border-slate-50">
-                        <th className="pb-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-left w-1/3">Meeting Title</th>
-                        <th className="pb-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-left">Date</th>
-                        <th className="pb-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-left">Attendees</th>
-                        <th className="pb-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-left">Status</th>
-                        <th className="pb-6"></th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-50">
-                      {[
-                        { title: "Weekly Sync: Growth & Marketing", sub: "4 Key Decisions", date: "Dec 12, 2023", status: "reviewed", statusColor: "bg-blue-50 text-blue-600" },
-                        { title: "Security Audit: Post-Mortem", sub: "12 Action Items", date: "Dec 10, 2023", status: "processing", statusColor: "bg-indigo-50 text-indigo-600" },
-                      ].map((row, i) => (
-                        <tr key={i} className="group hover:bg-slate-50 transition-all">
-                          <td className="py-6 pr-4 align-top">
-                            <p className="text-sm font-extrabold text-slate-800 mb-1">{row.title}</p>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{row.sub}</p>
-                          </td>
-                          <td className="py-6 pr-4 align-top">
-                            <p className="text-xs font-bold text-slate-600 truncate">{row.date}</p>
-                          </td>
-                          <td className="py-6 pr-4 align-top">
-                            <div className="flex -space-x-2">
-                              {[1, 2, 3].map(j => (
-                                <img key={j} src={`https://i.pravatar.cc/150?u=${i * 10 + j}`} className="w-7 h-7 rounded-full border-2 border-white shadow-sm" alt="User" />
-                              ))}
-                              <div className="w-7 h-7 rounded-full bg-slate-900 border-2 border-white flex items-center justify-center text-[8px] font-bold text-white tracking-widest">+3</div>
-                            </div>
-                          </td>
-                          <td className="py-6 pr-4 align-top">
-                            <span className={`inline-block text-[8px] font-extrabold uppercase px-2 py-1 rounded tracking-widest ${row.statusColor}`}>
-                              {row.status}
-                            </span>
-                          </td>
-                          <td className="py-6 text-right align-top">
-                            <button className="p-2 text-slate-300 hover:text-[#2563EB] transition-all">
-                              <ExternalLink size={16} />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="min-w-[700px]">
+                  {/* Grid Header */}
+                  <div className="grid grid-cols-[3fr_1fr_1.2fr_1fr_60px] gap-8 border-b border-slate-100 pb-6 mb-4 px-6">
+                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-left">Meeting Title</p>
+                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-left">Date</p>
+                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-left">Attendees</p>
+                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-left">Status</p>
+                    <div></div>
+                  </div>
+
+                  {/* Grid Body */}
+                  <div className="divide-y divide-slate-50">
+                    {[
+                      { title: "Weekly Sync: Growth & Marketing", sub: "4 Key Decisions", date: "Dec 12, 2023", status: "reviewed", statusColor: "bg-blue-50 text-[#2563EB]" },
+                      { title: "Security Audit: Post-Mortem", sub: "12 Action Items", date: "Dec 10, 2023", status: "processing", statusColor: "bg-indigo-50 text-indigo-600" },
+                    ].map((row, i) => (
+                      <div key={i} className="grid grid-cols-[3fr_1fr_1.2fr_1fr_60px] gap-8 py-8 px-6 group hover:bg-slate-50/50 transition-all items-center rounded-3xl">
+                        <div className="pr-6">
+                          <p className="text-[15px] font-black text-slate-800 mb-1.5 group-hover:text-[#2563EB] transition-colors">{row.title}</p>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">{row.sub}</p>
+                        </div>
+                        <div className="pr-4">
+                          <p className="text-xs font-bold text-slate-500">{row.date}</p>
+                        </div>
+                        <div className="pr-4">
+                          <div className="flex -space-x-2">
+                            {[1, 2, 3].map(j => (
+                              <img key={j} src={`https://i.pravatar.cc/150?u=${i * 10 + j}`} className="w-8 h-8 rounded-full border-2 border-white shadow-sm" alt="User" />
+                            ))}
+                            <div className="w-8 h-8 rounded-full bg-slate-900 border-2 border-white flex items-center justify-center text-[9px] font-black text-white tracking-widest">+3</div>
+                          </div>
+                        </div>
+                        <div className="pr-4">
+                          <span className={`inline-block text-[9px] font-black uppercase px-3 py-1.5 rounded-lg tracking-widest shadow-sm ${row.statusColor}`}>
+                            {row.status}
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          <button className="w-10 h-10 rounded-xl bg-white border border-slate-100 text-slate-300 hover:text-[#2563EB] hover:border-blue-100 hover:shadow-sm transition-all flex items-center justify-center group/btn active:scale-90">
+                            <ExternalLink size={18} className="group-hover/btn:scale-110 transition-transform" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </section>
             </div>

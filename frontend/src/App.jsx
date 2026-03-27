@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
 import MeetingSummaries from "./pages/MeetingSummaries";
+import KnowledgeBase from "./pages/KnowledgeBase";
 
 export const App = () => {
   return (
@@ -13,6 +14,7 @@ export const App = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/summaries" element={<MeetingSummaries />} />
+        <Route path="/knowledge" element={<KnowledgeBase />} />
         <Route path="/login" element={<Login />} />
       </Routes>
     </BrowserRouter>
