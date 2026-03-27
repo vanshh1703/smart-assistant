@@ -16,7 +16,15 @@ import {
   User,
   ArrowUpRight,
   ShieldCheck,
-  AlertCircle
+  AlertCircle,
+  Search,
+  Zap,
+  Activity,
+  Calendar,
+  Layers,
+  MoreVertical,
+  Check,
+  ArrowRight
 } from 'lucide-react';
 
 const Projects = () => {
@@ -30,254 +38,289 @@ const Projects = () => {
       <div className="flex-1 lg:ml-64 flex flex-col min-w-0">
         <Header toggleSidebar={toggleSidebar} />
         
-        <main className="p-6 md:p-10 max-w-[1600px] mx-auto w-full">
-          {/* Project Header */}
-          <div className="flex flex-col xl:flex-row justify-between items-start gap-8 mb-10">
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="bg-[#4B5563] text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Internal</span>
-                <span className="text-[#9CA3AF] text-[10px] font-bold tracking-widest uppercase">Project ID: SPAI-882</span>
+        <main className="p-6 md:p-10 max-w-[1500px] mx-auto w-full">
+          
+          {/* Projects Header & Controls */}
+          <div className="flex flex-col xl:flex-row justify-between items-start gap-10 mb-12">
+            <div className="flex-1 space-y-4">
+              <div className="flex items-center gap-3">
+                 <span className="px-3 py-1 bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg shadow-lg">Active Project</span>
+                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-white px-3 py-1 rounded-lg border border-slate-100">ID: SPAI-882</span>
               </div>
-              <h1 className="text-[#111827] text-3xl md:text-4xl font-extrabold tracking-tight mb-4">Neo-Bank Mobile Interface</h1>
-              <p className="text-slate-500 max-w-2xl leading-relaxed font-medium">
-                Designing the high-fidelity prototype for the digital wealth management suite including real-time stock integration and AI portfolio curation.
+              <h1 className="text-4xl md:text-5xl font-black text-slate-800 tracking-tighter">Neo-Bank Mobile Interface</h1>
+              <p className="text-slate-500 max-w-2xl leading-relaxed font-bold opacity-80 text-sm md:text-base">
+                Architecting the digital-first wealth management suite including real-time asset tracking and AI portfolio curation for Gen-Z investors.
               </p>
             </div>
             
-            <div className="flex items-center gap-3 shrink-0">
-              <button className="flex items-center gap-2 bg-white border border-gray-100 text-gray-700 px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-slate-50 transition-all shadow-sm">
-                <Filter size={18} />
-                <span>Filter</span>
-              </button>
-              <button className="flex items-center gap-2 bg-white border border-gray-100 text-gray-700 px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-slate-50 transition-all shadow-sm">
-                <Layout size={18} className="rotate-90" />
-                <span>Gantt View</span>
-              </button>
-              <button className="flex items-center gap-2 bg-[#2563EB] text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 active:scale-95">
-                <Plus size={18} strokeWidth={3} />
-                <span>Add Task</span>
-              </button>
+            <div className="flex items-center gap-4 shrink-0 mt-4 xl:mt-0">
+               <div className="flex bg-white p-1.5 rounded-2xl border border-slate-50 shadow-sm">
+                  <button className="p-3 bg-slate-50 text-slate-800 rounded-xl shadow-inner transition-all"><Layout size={18} strokeWidth={2.5} /></button>
+                  <button className="p-3 text-slate-300 hover:text-slate-600 transition-all"><Layers size={18} /></button>
+               </div>
+               <button className="flex items-center gap-3 bg-white border border-slate-100 text-slate-700 px-6 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-slate-50 transition-all shadow-sm">
+                 <Filter size={16} strokeWidth={3} />
+                 Filter
+               </button>
+               <button className="flex items-center gap-3 bg-blue-600 text-white px-8 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 active:scale-95">
+                 <Plus size={18} strokeWidth={4} />
+                 Add Task
+               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-10">
-            {/* Left Column */}
-            <div className="space-y-10">
-              {/* AI Prioritization Section */}
-              <section className="bg-[#F5F3FF] rounded-4xl p-8 md:p-10 border border-[#E9E5FF] relative overflow-hidden">
-                <div className="flex items-center gap-4 mb-8 relative z-10">
-                  <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-indigo-100">
-                    <Sparkles size={24} />
+          <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-12">
+            {/* Left Column: Management Board */}
+            <div className="space-y-12">
+              
+              {/* AI Strategic Priority Row */}
+              <section className="bg-white rounded-[2.8rem] p-10 shadow-sm border border-slate-50 group relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-50/50 rounded-full translate-x-1/2 -translate-y-1/2 opacity-50 blur-[60px]"></div>
+                
+                <div className="flex items-center gap-5 mb-10 relative z-10 transition-transform group-hover:translate-x-1 duration-500">
+                  <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-indigo-100 border border-white/20">
+                    <Sparkles size={26} strokeWidth={2.5} />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-indigo-900 tracking-tight">AI Task Prioritization</h2>
-                    <p className="text-indigo-600/70 text-xs font-bold uppercase tracking-widest mt-1">Based on deadline proximity and team capacity</p>
+                    <h2 className="text-2xl font-black text-slate-800 tracking-tight">AI Strategy Pulse</h2>
+                    <p className="text-indigo-600 text-[10px] font-black uppercase tracking-widest mt-1">Real-time Task Prioritization</p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
-                  {/* AI Card 1 */}
-                  <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-all group/card cursor-pointer">
-                    <div className="flex justify-between items-center mb-6">
-                      <span className="bg-[#FFF1F2] text-[#E11D48] text-[9px] font-bold px-2 py-1 rounded uppercase tracking-wider">Urgent</span>
-                      <span className="text-indigo-600 text-[10px] font-bold">98% Match</span>
-                    </div>
-                    <h3 className="font-bold text-slate-800 text-lg group-hover/card:text-indigo-600 transition-colors mb-3">Finalize Crypto Wallet API Integration</h3>
-                    <p className="text-slate-500 text-sm leading-relaxed mb-6">The backend team is waiting on the schema mapping to begin testing...</p>
-                    <div className="flex items-center justify-between">
-                      <div className="flex -space-x-2">
-                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=128&h=128&q=80" className="w-8 h-8 rounded-full border-2 border-white" alt="User" />
-                        <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=128&h=128&q=80" className="w-8 h-8 rounded-full border-2 border-white" alt="User" />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative z-10">
+                  {/* AI Recommendation Card 1 */}
+                  <div className="bg-[#F1F5F9]/50 rounded-[2.2rem] p-7 border border-transparent hover:bg-white hover:border-slate-100 hover:shadow-xl transition-all group/card cursor-pointer flex flex-col justify-between h-full">
+                    <div>
+                      <div className="flex justify-between items-center mb-8">
+                        <span className="bg-red-50 text-red-600 text-[9px] font-black px-2.5 py-1 rounded-lg uppercase tracking-widest">Urgent Priority</span>
+                        <div className="flex items-center gap-1.5 font-sans font-black text-[10px] text-indigo-600 tracking-tighter">
+                           MATCH <span className="text-sm">98%</span>
+                        </div>
                       </div>
-                      <span className="text-[10px] font-bold text-[#9CA3AF] uppercase">Due in 4h</span>
+                      <h3 className="font-black text-slate-800 text-lg group-hover/card:text-indigo-600 transition-colors mb-3 tracking-tight">Crypto Wallet API Sync</h3>
+                      <p className="text-slate-400 text-sm font-bold leading-relaxed mb-8 opacity-90">The node-cluster requires immediate port mapping to resolve latency issues reported in the morning sprint.</p>
+                    </div>
+                    <div className="flex items-center justify-between border-t border-slate-100/50 pt-5 mt-auto">
+                      <div className="flex -space-x-2">
+                        <img src="https://i.pravatar.cc/100?u=a" className="w-8 h-8 rounded-full border-2 border-white shadow-sm" alt="User" />
+                        <img src="https://i.pravatar.cc/100?u=b" className="w-8 h-8 rounded-full border-2 border-white shadow-sm" alt="User" />
+                      </div>
+                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5"><Clock size={12} strokeWidth={3} /> Due in 4h</span>
                     </div>
                   </div>
 
-                  {/* AI Card 2 */}
-                  <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-all group/card cursor-pointer">
-                    <div className="flex justify-between items-center mb-6">
-                      <span className="bg-[#EEF2FF] text-[#4F46E5] text-[9px] font-bold px-2 py-1 rounded uppercase tracking-wider">Strategic</span>
-                      <span className="text-indigo-600 text-[10px] font-bold">85% Match</span>
-                    </div>
-                    <h3 className="font-bold text-slate-800 text-lg group-hover/card:text-indigo-600 transition-colors mb-3">Accessibility Audit for Dark Mode</h3>
-                    <p className="text-slate-500 text-sm leading-relaxed mb-6">Address contrast ratio issues reported in the latest design review...</p>
-                    <div className="flex items-center justify-between">
-                      <div className="flex -space-x-2">
-                        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=128&h=128&q=80" className="w-8 h-8 rounded-full border-2 border-white" alt="User" />
+                  {/* AI Recommendation Card 2 */}
+                  <div className="bg-[#F1F5F9]/50 rounded-4xl p-7 border border-transparent hover:bg-white hover:border-slate-100 hover:shadow-xl transition-all group/card cursor-pointer flex flex-col justify-between h-full">
+                    <div>
+                      <div className="flex justify-between items-center mb-8">
+                        <span className="bg-blue-50 text-blue-600 text-[9px] font-black px-2.5 py-1 rounded-lg uppercase tracking-widest">Efficiency Play</span>
+                        <div className="flex items-center gap-1.5 font-sans font-black text-[10px] text-indigo-600 tracking-tighter">
+                           SAVING <span className="text-sm">2.4h</span>
+                        </div>
                       </div>
-                      <span className="text-[10px] font-bold text-[#9CA3AF] uppercase">Due Tomorrow</span>
+                      <h3 className="font-black text-slate-800 text-lg group-hover/card:text-blue-600 transition-colors mb-3 tracking-tight">Refactor Auth Middleware</h3>
+                      <p className="text-slate-400 text-sm font-bold leading-relaxed mb-8 opacity-90">Combining repetitive validation gates into a single-pass service could reduce latency by 15% across all endpoints.</p>
+                    </div>
+                    <div className="flex items-center justify-between border-t border-slate-100/50 pt-5 mt-auto">
+                       <span className="text-[11px] font-black text-blue-600 tracking-tight flex items-center gap-1 group-hover/card:translate-x-1 transition-transform uppercase">Review Suggestion <ArrowRight size={14} strokeWidth={3} /></span>
                     </div>
                   </div>
                 </div>
               </section>
 
-              {/* Active Tasks Section */}
-              <div className="space-y-8">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-2xl font-extrabold text-[#111827] tracking-tight">Active Tasks</h2>
-                  <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-xl border border-gray-100">
-                    <button className="p-1.5 text-gray-400 hover:text-gray-600 transition-all rounded-lg"><Layout size={18} /></button>
-                    <button className="p-1.5 text-blue-600 bg-white shadow-sm rounded-lg border border-gray-100"><Layout size={18} className="rotate-90" /></button>
-                  </div>
+              {/* Task Grid Management */}
+              <section className="bg-white rounded-[2.8rem] p-10 shadow-sm border border-slate-50">
+                <div className="flex justify-between items-center mb-12">
+                   <div className="flex items-center gap-4">
+                     <h2 className="text-2xl font-black text-slate-800 tracking-tighter">Project Workflow</h2>
+                     <div className="px-3 py-1 bg-slate-50 text-slate-400 text-[9px] font-black rounded-lg uppercase tracking-widest border border-slate-100">View: Kanban</div>
+                   </div>
+                   <div className="flex gap-2">
+                     <div className="relative group">
+                        <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-colors" />
+                        <input type="text" placeholder="Search tasks..." className="pl-11 pr-6 py-3 bg-slate-50 border-none rounded-2xl text-[11px] font-black uppercase tracking-widest focus:bg-white focus:ring-4 focus:ring-blue-50 transition-all w-[240px] outline-none shadow-inner" />
+                     </div>
+                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  {/* Task Item 1 */}
-                  <div className="bg-white p-5 rounded-4xl border border-slate-50 shadow-sm hover:border-blue-100 hover:shadow-md transition-all group flex items-center gap-6">
-                    <div className="w-7 h-7 rounded-lg border-2 border-slate-200 flex items-center justify-center cursor-pointer hover:border-blue-400 transition-colors">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {/* Category: Review Needed */}
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between px-4">
+                       <div className="flex items-center gap-3">
+                         <div className="w-2.5 h-2.5 bg-amber-400 rounded-full shadow-lg shadow-amber-100"></div>
+                         <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Review Needed</h3>
+                       </div>
+                       <button className="text-slate-300 hover:text-slate-800 transition-colors"><Plus size={16} strokeWidth={3} /></button>
                     </div>
-                    <div className="flex-1">
-                      <h4 className="font-bold text-slate-800 text-[15px]">Design system token mapping</h4>
-                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight mt-1">Created 2 days ago • Sprint 4</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2.5 h-2.5 bg-blue-500 rounded-full"></div>
-                      <span className="text-xs font-bold text-slate-700">In Progress</span>
-                    </div>
-                    <div className="hidden sm:block bg-[#F3F4F6] text-[#6B7280] px-3 py-1 rounded-md text-[10px] font-bold tracking-wider">MEDIUM</div>
-                    <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=128&h=128&q=80" className="w-8 h-8 rounded-full border-2 border-white shadow-sm" alt="Assignee" />
+
+                    {[
+                      { title: 'Landing Page v2 Feedback', tag: 'Design', color: 'text-indigo-600 bg-indigo-50', users: 3 },
+                      { title: 'Auth Logic Validation', tag: 'Dev', color: 'text-blue-600 bg-blue-50', users: 1 }
+                    ].map((task, i) => (
+                      <div key={i} className="bg-white p-6 rounded-4xl border border-slate-50 shadow-[0_10px_30px_-15px_rgba(0,0,0,0.05)] hover:shadow-xl hover:scale-[1.02] transition-all cursor-pointer group">
+                         <div className="flex justify-between items-start mb-6">
+                            <span className={`px-2.5 py-1 ${task.color} text-[9px] font-black uppercase tracking-widest rounded-lg`}>{task.tag}</span>
+                            <button className="text-slate-300 hover:text-slate-800 opacity-0 group-hover:opacity-100 transition-all"><MoreVertical size={16} /></button>
+                         </div>
+                         <h4 className="font-black text-slate-800 text-[15px] mb-8 leading-snug group-hover:text-amber-600 transition-colors tracking-tight">{task.title}</h4>
+                         <div className="flex items-center justify-between">
+                            <div className="flex -space-x-1.5">
+                               {[...Array(task.users)].map((_, n) => (
+                                 <img key={n} src={`https://i.pravatar.cc/100?u=task${i}${n}`} className="w-7 h-7 rounded-full border-2 border-white shadow-sm" alt="Avatar" />
+                               ))}
+                            </div>
+                            <div className="flex items-center gap-1.5 text-slate-300 group-hover:text-slate-800 transition-all">
+                               <MessageSquare size={14} />
+                               <span className="text-[10px] font-black uppercase font-mono">{i+4}</span>
+                            </div>
+                         </div>
+                      </div>
+                    ))}
                   </div>
 
-                  {/* Task Item 2 */}
-                  <div className="bg-white p-5 rounded-4xl border border-slate-50 shadow-sm hover:border-red-100 hover:shadow-md transition-all group flex items-center gap-6">
-                    <div className="w-7 h-7 rounded-lg border-2 border-slate-200 flex items-center justify-center">
+                  {/* Category: In Progress */}
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between px-4">
+                       <div className="flex items-center gap-3">
+                         <div className="w-2.5 h-2.5 bg-blue-600 rounded-full shadow-lg shadow-blue-100"></div>
+                         <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Active Sprint</h3>
+                       </div>
                     </div>
-                    <div className="flex-1">
-                      <h4 className="font-bold text-slate-800 text-[15px]">User interview analysis - Phase 1</h4>
-                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight mt-1">Created 4 days ago • Research</p>
+
+                    <div className="bg-white p-7 rounded-4xl border-2 border-blue-600 shadow-2xl shadow-blue-50/50 cursor-pointer group hover:translate-y-[-4px] transition-all relative overflow-hidden">
+                       <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                         <Zap size={40} className="text-blue-600" />
+                       </div>
+                       <div className="flex justify-between items-center mb-6">
+                          <span className="bg-blue-600 text-white text-[9px] font-black px-2.5 py-1 rounded-lg uppercase tracking-widest shadow-lg shadow-blue-100">Active Now</span>
+                          <span className="text-[10px] font-black text-blue-600 tracking-tighter">72% DONE</span>
+                       </div>
+                       <h4 className="font-black text-slate-800 text-[17px] mb-4 tracking-tight">Main Dashboard UI Refinement</h4>
+                       <p className="text-xs font-bold text-slate-400 mb-8 leading-relaxed">Applying high-fidelity visual updates and backdrop-blur effects.</p>
+                       
+                       <div className="w-full h-2 bg-blue-50 rounded-full overflow-hidden p-0.5 mb-6">
+                          <div className="h-full bg-blue-600 rounded-full shadow-lg transition-all duration-1000" style={{ width: '72%' }}></div>
+                       </div>
+
+                       <div className="flex justify-between items-center pt-2">
+                          <div className="flex -space-x-1.5">
+                             {[1,2].map(n => (
+                               <img key={n} src={`https://i.pravatar.cc/100?u=blue${n}`} className="w-7 h-7 rounded-full border-2 border-white shadow-sm" alt="Avatar" />
+                             ))}
+                          </div>
+                          <div className="flex items-center gap-2 group-hover:translate-x-1 transition-transform">
+                             <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Open Details</span>
+                             <ArrowRight size={12} strokeWidth={3} className="text-blue-600" />
+                          </div>
+                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2.5 h-2.5 bg-red-500 rounded-full"></div>
-                      <span className="text-xs font-bold text-slate-700">Blocked</span>
-                    </div>
-                    <div className="hidden sm:block bg-[#EEF2FF] text-[#4338CA] px-3 py-1 rounded-md text-[10px] font-bold tracking-wider">HIGH</div>
-                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" className="w-8 h-8 rounded-full border-2 border-white shadow-sm" alt="Assignee" />
                   </div>
 
-                  {/* Task Item 3 */}
-                  <div className="bg-white p-5 rounded-4xl border border-slate-50 shadow-sm flex items-center gap-6">
-                    <div className="w-7 h-7 rounded-lg bg-[#2563EB] flex items-center justify-center text-white">
-                      <CheckCircle2 size={16} />
+                  {/* Category: Done */}
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between px-4">
+                       <div className="flex items-center gap-3">
+                         <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full shadow-lg shadow-emerald-100"></div>
+                         <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Completed</h3>
+                       </div>
                     </div>
-                    <div className="flex-1">
-                      <h4 className="font-bold text-slate-400 text-[15px]">Stakeholder review deck</h4>
-                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight mt-1">Completed 1 hour ago</p>
+
+                    <div className="bg-emerald-50/50 p-6 rounded-4xl border border-emerald-100/50 group grayscale-[0.8] hover:grayscale-0 hover:bg-white hover:shadow-xl transition-all cursor-pointer">
+                       <div className="flex items-center gap-3 mb-4 text-emerald-600 font-black text-[10px] uppercase tracking-widest">
+                          <div className="p-1.5 bg-emerald-100 rounded-lg">
+                             <Check size={12} strokeWidth={4} />
+                          </div>
+                          Completed
+                       </div>
+                       <h4 className="font-black text-slate-500 group-hover:text-slate-800 transition-colors text-[15px] mb-2 tracking-tight line-through">Style Guide Foundation</h4>
+                       <p className="text-[11px] font-bold text-slate-300 group-hover:text-slate-400 transition-colors line-through">Color palette, typography, and base grids.</p>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full"></div>
-                      <span className="text-xs font-bold text-slate-700">Done</span>
-                    </div>
-                    <div className="hidden sm:block bg-[#F3F4F6] text-[#6B7280] px-3 py-1 rounded-md text-[10px] font-bold tracking-wider">LOW</div>
-                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=128&h=128&q=80" className="w-8 h-8 rounded-full border-2 border-white shadow-sm" alt="Assignee" />
-                  </div>
-                  
-                  {/* Insert placeholder */}
-                  <div className="border-2 border-dashed border-slate-200 p-5 rounded-4xl flex items-center justify-center gap-3 text-slate-400 hover:text-blue-600 hover:border-blue-400 hover:bg-blue-50/20 cursor-pointer transition-all group">
-                    <Plus size={20} className="group-hover:scale-110 transition-transform" />
-                    <span className="text-sm font-bold tracking-tight">Insert new task here</span>
                   </div>
                 </div>
-              </div>
+              </section>
             </div>
 
-            {/* Right Column */}
-            <div className="space-y-8">
-              {/* Upcoming Milestones */}
-              <section className="bg-white rounded-4xl p-8 border border-slate-50 shadow-sm">
-                <div className="flex items-center justify-between mb-8">
-                  <h3 className="font-bold text-slate-900 tracking-tight">Upcoming Milestones</h3>
-                  <button className="text-blue-600 p-1.5 hover:bg-blue-50 rounded-lg transition-all">
-                    <ArrowUpRight size={20} />
+            {/* Right Column: Project Sidebar */}
+            <aside className="space-y-10">
+               
+               {/* Team Status Card */}
+               <section className="bg-white rounded-[2.8rem] p-8 shadow-sm border border-slate-50">
+                  <h3 className="text-[18px] font-black text-slate-800 tracking-tight mb-8">Team Collaboration</h3>
+                  <div className="space-y-6">
+                     {[
+                       { name: 'Marcus Wong', status: 'In Design', color: 'bg-indigo-500' },
+                       { name: 'Sarah Kim', status: 'Refactoring API', color: 'bg-emerald-500' },
+                       { name: 'Jordan Doe', status: 'Idle', color: 'bg-slate-300' }
+                     ].map((member, i) => (
+                       <div key={i} className="flex items-center justify-between group cursor-default">
+                          <div className="flex items-center gap-4">
+                             <div className="relative">
+                               <img src={`https://i.pravatar.cc/100?u=team${i}`} className="w-11 h-11 rounded-2xl border-2 border-white shadow-sm" alt="User" />
+                               <div className={`absolute -bottom-1 -right-1 w-3.5 h-3.5 ${member.color} rounded-full border-2 border-white shadow-sm`}></div>
+                             </div>
+                             <div>
+                               <p className="text-[14px] font-black text-slate-800 tracking-tight">{member.name}</p>
+                               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{member.status}</p>
+                             </div>
+                          </div>
+                          <button className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-300 hover:text-blue-600 hover:bg-blue-50 transition-all opacity-0 group-hover:opacity-100">
+                             <MessageSquare size={16} strokeWidth={3} />
+                          </button>
+                       </div>
+                     ))}
+                  </div>
+
+                  <button className="w-full mt-10 py-4 bg-slate-900 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-black transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2">
+                     Invite Partner <Plus size={14} strokeWidth={3} />
                   </button>
-                </div>
+               </section>
 
-                <div className="space-y-10 relative before:content-[''] before:absolute before:left-[7px] before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-100">
-                  <div className="relative pl-8">
-                    <div className="absolute left-0 top-1.5 w-4 h-4 rounded-full border-4 border-white bg-blue-600 shadow-sm z-10 transition-transform hover:scale-125 cursor-pointer"></div>
-                    <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Oct 24, 2023</span>
-                    <h4 className="text-sm font-bold text-slate-900 mt-1">Beta Launch Prototype</h4>
-                    <p className="text-xs text-slate-400 mt-2 leading-relaxed">High-fidelity screens ready for review</p>
-                  </div>
-                  
-                  <div className="relative pl-8">
-                    <div className="absolute left-0 top-1.5 w-4 h-4 rounded-full border-4 border-white bg-slate-200 shadow-sm z-10"></div>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Oct 31, 2023</span>
-                    <h4 className="text-sm font-bold text-slate-900 mt-1">User Acceptance Testing</h4>
-                    <p className="text-xs text-slate-400 mt-2 leading-relaxed">Recruiting 10 external beta testers</p>
-                  </div>
-
-                  <div className="relative pl-8">
-                    <div className="absolute left-0 top-1.5 w-4 h-4 rounded-full border-4 border-white bg-slate-200 shadow-sm z-10"></div>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Nov 15, 2023</span>
-                    <h4 className="text-sm font-bold text-slate-900 mt-1">Production Handover</h4>
-                    <p className="text-xs text-slate-400 mt-2 leading-relaxed">Final assets and documentation delivery</p>
-                  </div>
-                </div>
-              </section>
-
-              {/* Project Discussion */}
-              <section className="bg-white rounded-4xl border border-slate-50 shadow-sm flex flex-col h-[550px]">
-                <div className="p-6 border-b border-slate-50 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <MessageSquare size={18} className="text-[#2563EB]" />
-                    <h3 className="text-sm font-bold text-slate-900">Project Discussion</h3>
-                  </div>
-                  <div className="flex -space-x-2">
-                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=128&h=128&q=80" className="w-7 h-7 rounded-full border-2 border-white shadow-sm" alt="User" />
-                    <div className="w-7 h-7 rounded-full bg-slate-900 border-2 border-white flex items-center justify-center text-[8px] font-bold text-white tracking-widest">+4</div>
-                  </div>
-                </div>
-
-                <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-white">
-                  {/* Incoming message */}
-                  <div className="flex gap-3">
-                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=128&h=128&q=80" className="w-8 h-8 rounded-full border border-slate-100" alt="Sarah" />
-                    <div className="flex flex-col gap-1 max-w-[85%]">
-                      <p className="text-[10px] font-bold text-[#2563EB]">Sarah Chen</p>
-                      <div className="bg-[#F3F4F6] p-4 rounded-2xl rounded-tl-none ring-1 ring-slate-100">
-                        <p className="text-[13px] text-slate-700 leading-relaxed font-medium">Does anyone have the latest SVG for the crypto icons? The ones in Figma seem to be outdated.</p>
-                        <p className="text-[9px] font-bold text-slate-400 mt-2 uppercase tracking-tight">10:42 AM</p>
-                      </div>
+               {/* Project Health Radar */}
+               <section className="bg-white rounded-[2.8rem] p-8 shadow-sm border border-slate-50 flex flex-col justify-between min-h-[400px]">
+                  <div>
+                    <h3 className="text-[18px] font-black text-slate-800 tracking-tight mb-2 uppercase">Project Health</h3>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-10 border-b border-slate-50 pb-4">Real-time Diagnostics</p>
+                    
+                    <div className="space-y-8">
+                       {[
+                         { label: 'Timeline Risk', val: 'Low', color: 'text-emerald-500', bg: 'bg-emerald-50' },
+                         { label: 'Code Quality', val: '98%', color: 'text-blue-600', bg: 'bg-blue-50' },
+                         { label: 'Open Issues', val: '14', color: 'text-amber-500', bg: 'bg-amber-50' }
+                       ].map((stat, i) => (
+                         <div key={i} className="flex flex-col gap-3 group">
+                            <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">
+                               <span>{stat.label}</span>
+                               <span className={stat.color}>{stat.val}</span>
+                            </div>
+                            <div className="w-full h-2 bg-slate-50 rounded-full overflow-hidden p-0.5">
+                               <div className={`h-full ${stat.color === 'text-blue-600' ? 'bg-blue-600' : stat.color === 'text-emerald-500' ? 'bg-emerald-500' : 'bg-amber-500'} rounded-full transition-all duration-1000`} style={{ width: i === 0 ? '20%' : i === 1 ? '98%' : '65%' }}></div>
+                            </div>
+                         </div>
+                       ))}
                     </div>
                   </div>
 
-                  {/* Outgoing message */}
-                  <div className="flex flex-col items-end gap-1 ml-auto max-w-[85%]">
-                    <div className="bg-[#2563EB] p-4 rounded-2xl rounded-tr-none shadow-lg shadow-blue-100/50">
-                      <p className="text-[13px] text-white leading-relaxed font-medium">I&apos;ve just uploaded them to the assets folder in the Knowledge Base section!</p>
-                      <p className="text-[9px] font-bold text-blue-200 mt-2 uppercase tracking-tight text-right">10:45 AM</p>
-                    </div>
+                  <div className="mt-10 p-6 bg-blue-50/50 rounded-4xl border border-blue-100 relative overflow-hidden group/alert cursor-pointer flex items-center justify-between">
+                     <div className="relative z-10 flex items-center gap-4">
+                        <div className="w-10 h-10 bg-white rounded-xl shadow-sm border border-blue-100 flex items-center justify-center text-blue-600">
+                           <Activity size={18} strokeWidth={3} />
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-black text-slate-800 uppercase tracking-tighter">Velocity Spike</p>
+                          <p className="text-[10px] font-bold text-blue-600/70 uppercase">+15% week-over-week</p>
+                        </div>
+                     </div>
+                     <ChevronRight size={16} className="text-blue-600 opacity-50 transition-transform group-hover/alert:translate-x-1" strokeWidth={3} />
                   </div>
+               </section>
 
-                  {/* AI Message */}
-                  <div className="flex gap-3">
-                    <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white shadow-md">
-                      <Sparkles size={14} />
-                    </div>
-                    <div className="flex flex-col gap-1 max-w-[85%]">
-                      <p className="text-[10px] font-bold text-indigo-600">SPAI Bot</p>
-                      <div className="bg-[#F5F3FF] p-4 rounded-2xl rounded-tl-none ring-1 ring-indigo-50 italic">
-                        <p className="text-[12px] text-indigo-800 leading-relaxed font-medium">I&apos;ve detected a potential conflict in the API migration schedule.</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-4 bg-white border-t border-slate-50">
-                  <div className="relative flex items-center">
-                    <Plus size={18} className="absolute left-4 text-slate-400" />
-                    <input 
-                      type="text" 
-                      placeholder="Type your message..." 
-                      className="w-full bg-[#F3F4F6] border-none rounded-2xl py-3 pl-12 pr-12 text-sm focus:ring-2 focus:ring-blue-100 outline-none transition-all placeholder:text-slate-400 font-medium"
-                    />
-                    <Send size={18} className="absolute right-4 text-[#2563EB] cursor-pointer" />
-                  </div>
-                </div>
-              </section>
-            </div>
+               {/* Activity Log Toggle */}
+               <button className="w-full py-4 text-[11px] font-black text-slate-400 hover:text-slate-800 transition-colors uppercase tracking-widest border-2 border-dashed border-slate-200 rounded-4xl hover:border-slate-800 hover:bg-white active:scale-98">
+                  View full activity log
+               </button>
+            </aside>
           </div>
-
         </main>
       </div>
     </div>

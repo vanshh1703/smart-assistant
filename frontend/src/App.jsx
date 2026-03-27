@@ -7,6 +7,7 @@ import MeetingSummaries from "./pages/MeetingSummaries";
 import KnowledgeBase from "./pages/KnowledgeBase";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
+import Billing from "./pages/Billing";
 
 export const App = () => {
   return (
@@ -19,6 +20,7 @@ export const App = () => {
         <Route path="/knowledge" element={<KnowledgeBase />} />
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/billing" element={<Billing />} />
         <Route path="/login" element={<Login />} />
       </Routes>
     </BrowserRouter>

@@ -15,7 +15,18 @@ import {
   Clock,
   ArrowUpRight,
   TrendingUp,
-  Files
+  Files,
+  Zap,
+  Play,
+  Download,
+  MoreVertical,
+  Activity,
+  ArrowRight,
+  Mic,
+  Users,
+  Calendar,
+  Layout,
+  Check
 } from 'lucide-react';
 
 const MeetingSummaries = () => {
@@ -29,260 +40,277 @@ const MeetingSummaries = () => {
       <div className="flex-1 lg:ml-64 flex flex-col min-w-0">
         <Header toggleSidebar={toggleSidebar} />
 
-        <main className="p-6 md:p-10 max-w-[1600px] mx-auto w-full">
+        <main className="p-6 md:p-10 max-w-[1500px] mx-auto w-full text-slate-800">
+          
           {/* Header Section */}
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 mb-12">
-            <div>
-              <p className="text-[#2563EB] text-[10px] font-bold uppercase tracking-[0.2em] mb-3">Curation Workspace</p>
-              <h1 className="text-3xl md:text-5xl font-extrabold text-[#111827] tracking-tight leading-none">Meeting Summaries</h1>
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-10 mb-16">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                 <span className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-100">
+                    <Zap size={18} fill="white" strokeWidth={0} />
+                 </span>
+                 <p className="text-blue-600 text-[10px] font-black uppercase tracking-[0.3em]">Neural Curation</p>
+              </div>
+              <h1 className="text-4xl md:text-6xl font-black tracking-tighter mb-2">Meeting Summaries</h1>
+              <p className="text-slate-500 text-lg font-bold opacity-80 max-w-xl leading-relaxed">
+                Automatically extracting action items and strategic pivots from every conversation. Your workspace memory, infinitely searchable.
+              </p>
             </div>
-            <div className="flex items-center gap-3 w-full lg:w-auto">
-              <button className="flex-1 lg:flex-none px-6 py-3 bg-white border border-slate-100 text-slate-600 font-bold text-sm rounded-2xl hover:bg-slate-50 transition-all shadow-sm active:scale-95">
-                Export Archive
+            
+            <div className="flex items-center gap-4 w-full lg:w-auto mt-6 lg:mt-0">
+              <button className="flex-1 lg:flex-none px-6 py-4 bg-white border border-slate-100 text-slate-600 font-black text-[11px] uppercase tracking-widest rounded-2xl hover:bg-slate-50 transition-all shadow-sm active:scale-95 group">
+                <Download size={16} className="inline mr-2 group-hover:mb-1 transition-all" />
+                Archive
               </button>
-              <button className="flex-1 lg:flex-none px-8 py-3 bg-[#2563EB] text-white font-bold text-sm rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 flex items-center justify-center gap-2 active:scale-95">
-                <Upload size={18} strokeWidth={2.5} />
+              <button className="flex-1 lg:flex-none px-10 py-4 bg-blue-600 text-white font-black text-[11px] uppercase tracking-widest rounded-2xl hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 flex items-center justify-center gap-3 active:scale-95">
+                <Upload size={18} strokeWidth={3} />
                 Upload Recording
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-10">
+          <div className="grid grid-cols-1 xl:grid-cols-[1fr_400px] gap-12">
             {/* Left Content Column */}
-            <div className="space-y-10">
+            <div className="space-y-12">
 
-              {/* Featured Summary Card */}
-              <section className="bg-white rounded-[2.5rem] p-8 md:p-12 border border-slate-100 shadow-sm relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+              {/* Featured Summary Card (Primary AI Analysis) */}
+              <section className="bg-white rounded-[3rem] p-10 md:p-14 border border-slate-50 shadow-sm relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-50/50 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 opacity-60"></div>
 
-                <div className="flex justify-between items-start mb-10 relative z-10">
-                  <div className="flex items-center gap-4">
-                    <span className="bg-indigo-600 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-wider shadow-sm shadow-indigo-100">AI Analysis</span>
-                    <span className="text-slate-400 text-xs font-bold flex items-center gap-2">
-                      <Clock size={14} />
-                      Dec 14, 2023 • 45 mins
+                <div className="flex justify-between items-start mb-14 relative z-10 transition-transform group-hover:translate-x-1 duration-700">
+                  <div className="flex flex-wrap items-center gap-5">
+                    <span className="bg-slate-900 text-white text-[10px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest shadow-xl shadow-slate-200">Featured Analysis</span>
+                    <span className="text-slate-400 text-[11px] font-black flex items-center gap-2 uppercase tracking-tight">
+                      <Calendar size={14} strokeWidth={2.5} />
+                      Dec 14, 2023
+                    </span>
+                    <span className="text-slate-400 text-[11px] font-black flex items-center gap-2 uppercase tracking-tight">
+                       <Clock size={14} strokeWidth={2.5} />
+                       45m Duration
                     </span>
                   </div>
-                  <button className="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all">
-                    <Share2 size={20} />
-                  </button>
+                  <div className="flex gap-2">
+                     <button className="p-3 bg-slate-50 text-slate-400 hover:text-slate-800 hover:bg-white hover:shadow-sm transition-all rounded-xl border border-transparent hover:border-slate-100">
+                       <Share2 size={20} strokeWidth={2.5} />
+                     </button>
+                     <button className="p-3 bg-slate-50 text-slate-400 hover:text-slate-800 hover:bg-white hover:shadow-sm transition-all rounded-xl border border-transparent hover:border-slate-100">
+                       <MoreVertical size={20} strokeWidth={2.5} />
+                     </button>
+                  </div>
                 </div>
 
-                <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight mb-10 leading-tight">Q1 Product Roadmap & Strategy Alignment</h2>
+                <h2 className="text-4xl md:text-5xl font-black text-slate-800 tracking-tighter mb-12 leading-[1.1] relative z-10">Neo-Bank: Q1 Product Roadmap & Strategy Alignment</h2>
 
-                {/* AI Insight Box */}
-                <div className="bg-indigo-50/50 border-l-4 border-indigo-500 p-8 rounded-3xl mb-12 ring-1 ring-indigo-100/50">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Sparkles size={18} className="text-indigo-600 transition-transform group-hover:scale-110" />
-                    <span className="text-indigo-600 text-[11px] font-bold uppercase tracking-[0.2em]">Executive Insight</span>
+                {/* Neural Extract Box */}
+                <div className="bg-indigo-600 rounded-[2.5rem] p-10 text-white relative shadow-2xl shadow-indigo-100 mb-14 overflow-hidden group/ neural">
+                  <div className="absolute inset-0 bg-linear-to-br from-white/10 to-transparent"></div>
+                  <div className="flex items-center gap-3 mb-6 relative z-10">
+                    <Sparkles size={20} className="text-white" fill="white" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.3em]">Neural Extract</span>
                   </div>
-                  <p className="text-[15px] text-slate-700 leading-relaxed font-medium">
-                    "The team is currently <span className="text-indigo-700 font-bold">15% ahead</span> of the technical debt clearance schedule, allowing for an earlier launch of the <span className="text-slate-900 font-bold italic">Smart Search</span> feature by approximately two weeks."
+                  <p className="text-[17px] leading-relaxed font-black relative z-10 italic">
+                    "The integration of AI portfolio curation is <span className="text-indigo-200 border-b-2 border-indigo-200/50">15% ahead of schedule</span>. We are shifting from acquisition-heavy focus to 'User Retainment' efficiency for the Q1-Q2 transition."
                   </p>
                 </div>
 
-                {/* Key Points */}
-                <div className="mb-14">
-                  <h3 className="text-[12px] font-bold text-indigo-600 uppercase tracking-[0.2em] mb-8 flex items-center gap-3">
-                    <span className="w-8 h-[2px] bg-indigo-200"></span>
-                    Key Points
-                  </h3>
-                  <ul className="space-y-8">
-                    {[
-                      "Consensus reached on shifting the focus toward **User Retainment** metrics for the first half of Q1, deprioritizing aggressive user acquisition.",
-                      "Engineering confirmed that the new **API v3** architecture is stable enough for internal beta testing starting next Monday.",
-                      "Design team presented the **Editorial UI** concept; stakeholders approved the move toward a cleaner, line-free aesthetic."
-                    ].map((point, i) => (
-                      <li key={i} className="flex gap-6 group items-start">
-                        <span className="shrink-0 w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-indigo-600 font-bold text-xs shadow-sm ring-1 ring-slate-100 group-hover:bg-indigo-600 group-hover:text-white transition-all">
-                          {i + 1}
-                        </span>
-                        <p className="text-[15px] text-slate-600 leading-relaxed pt-1"
-                          dangerouslySetInnerHTML={{ __html: point.replace(/\*\*(.*?)\*\*/g, '<b class="text-slate-900 font-extrabold">$1</b>') }}>
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                  {/* Decisions Made */}
-                  <div>
-                    <h3 className="text-[12px] font-bold text-indigo-600 uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-                      <span className="w-8 h-[2px] bg-indigo-200"></span>
-                      Decisions Made
-                    </h3>
-                    <div className="space-y-4">
-                      <div className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all">
-                        <p className="text-[9px] font-bold text-indigo-400 uppercase tracking-widest mb-3">Technical Strategy</p>
-                        <p className="text-[14px] font-bold text-slate-800 leading-relaxed">Adopt GraphQL for all new feature endpoints to reduce mobile data overhead.</p>
-                      </div>
-                      <div className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all">
-                        <p className="text-[9px] font-bold text-indigo-400 uppercase tracking-widest mb-3">Hiring Plan</p>
-                        <p className="text-[14px] font-bold text-slate-800 leading-relaxed">Approve headcount for 2 Senior Backend Engineers and 1 Lead Product Designer.</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Action Items */}
-                  <div>
-                    <h3 className="text-[12px] font-bold text-indigo-600 uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-                      <span className="w-8 h-[2px] bg-indigo-200"></span>
-                      Action Items
-                    </h3>
-                    <div className="space-y-3">
+                {/* Structured Key Decisions */}
+                <div className="mb-14 relative z-10 px-2 leading-relaxed">
+                   <div className="flex items-center gap-4 mb-10">
+                      <div className="h-[2px] w-12 bg-indigo-600 shrink-0"></div>
+                      <h3 className="text-[12px] font-black text-slate-800 uppercase tracking-[0.3em]">Mission Critical Pivots</h3>
+                   </div>
+                   <div className="space-y-10 font-bold">
                       {[
-                        { text: "Draft technical requirements for API v3 migration", tag: "High Prio", tagColor: "bg-red-50 text-red-600", checked: false },
-                        { text: "Schedule follow-up with infrastructure", tag: "Done", tagColor: "bg-emerald-50 text-emerald-600", checked: true },
-                        { text: "Update the Notion roadmap", tag: "Design", tagColor: "bg-blue-50 text-blue-600", checked: false },
-                      ].map((item, i) => (
-                        <div key={i} className="flex items-center justify-between p-4 bg-slate-50/50 border border-slate-100 rounded-2xl hover:bg-white hover:shadow-sm transition-all group cursor-pointer">
-                          <div className="flex items-center gap-3">
-                            <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${item.checked ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-slate-300 bg-white group-hover:border-indigo-400'
-                              }`}>
-                              {item.checked && <CheckCircle2 size={12} />}
-                            </div>
-                            <span className={`text-[13px] font-bold transition-all truncate max-w-[140px] ${item.checked ? 'text-slate-400 line-through' : 'text-slate-700'}`}>
-                              {item.text}
-                            </span>
-                          </div>
-                          <span className={`text-[8px] font-extrabold uppercase px-2 py-0.5 rounded tracking-tighter ${item.tagColor}`}>
-                            {item.tag}
-                          </span>
+                        { title: 'User Retainment Priority', body: 'Stakeholders reached consensus to deprioritize acquisition-spend by 30% in favor of developing advanced churn-prediction models.' },
+                        { title: 'API v3 Stability Launch', body: 'The backend architecture for v3 is certified stable for a closed-beta start next Tuesday. Documentation sync is pending.' },
+                        { title: 'Clean Editorial UI aesthetics', body: 'Approval granted for removing all table-lines in favor of whitespace-driven hierarchical depth across the dashboard.' }
+                      ].map((pivot, i) => (
+                        <div key={i} className="flex gap-8 group">
+                           <div className="w-10 h-10 rounded-2xl bg-[#F1F5F9] flex items-center justify-center shrink-0 shadow-sm border border-slate-50 text-slate-800 font-black text-xs transition-all group-hover:bg-blue-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-blue-100 group-hover:scale-110">
+                              0{i+1}
+                           </div>
+                           <div className="pt-1.5 space-y-2">
+                             <h4 className="text-[16px] font-black text-slate-800 tracking-tight transition-colors group-hover:text-blue-600 uppercase">{pivot.title}</h4>
+                             <p className="text-[15px] text-slate-400 group-hover:text-slate-500 transition-colors leading-relaxed font-bold opacity-90">{pivot.body}</p>
+                           </div>
                         </div>
                       ))}
-                    </div>
-                  </div>
+                   </div>
+                </div>
+
+                <div className="pt-10 border-t border-slate-50 relative z-10 flex items-center justify-between">
+                   <div className="flex gap-4">
+                      <button className="px-8 py-4 bg-slate-900 text-white rounded-[1.4rem] font-black text-[11px] uppercase tracking-widest shadow-xl hover:bg-black transition-all active:scale-95 flex items-center gap-3">
+                         <Play size={16} fill="white" />
+                         Listen Recording
+                      </button>
+                      <button className="px-8 py-4 bg-slate-50 text-slate-600 rounded-[1.4rem] font-black text-[11px] uppercase tracking-widest border border-slate-100 hover:bg-white hover:shadow-sm transition-all active:scale-95 flex items-center gap-3 group/btn">
+                         <FileText size={16} />
+                         Transcript
+                         <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                      </button>
+                   </div>
+                   <div className="flex -space-x-3">
+                      {[1,2,3,4].map(n => (
+                        <img key={n} src={`https://i.pravatar.cc/100?u=meet${n}`} className="w-9 h-9 rounded-full border-4 border-white shadow-sm ring-1 ring-slate-100" alt="Attendee" />
+                      ))}
+                   </div>
                 </div>
               </section>
 
-              {/* Recent Archive Table */}
-              <section className="bg-white rounded-[2.5rem] p-8 md:p-10 border border-slate-50 shadow-sm">
-                <div className="flex items-center justify-between mb-10">
-                  <h3 className="text-xl font-extrabold text-[#111827]">Recent Archive</h3>
-                  <div className="flex items-center gap-3">
-                    <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg transition-all"><Search size={18} /></button>
-                    <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg transition-all"><MoreHorizontal size={18} /></button>
-                  </div>
-                </div>
+              {/* Browse Past Summaries */}
+              <div className="flex items-center justify-between px-6 pt-4">
+                 <h3 className="text-xl font-black text-slate-800 tracking-tight">Previous Archives</h3>
+                 <div className="flex gap-2">
+                    <button className="bg-white p-3 border border-slate-50 rounded-xl text-slate-300 hover:text-slate-800 shadow-sm transition-all"><Layout size={18} strokeWidth={2.5} /></button>
+                    <button className="bg-blue-600 p-3 rounded-xl text-white shadow-xl shadow-blue-100"><Files size={18} strokeWidth={2.5} /></button>
+                 </div>
+              </div>
 
-                <div className="min-w-[700px]">
-                  {/* Grid Header */}
-                  <div className="grid grid-cols-[3fr_1fr_1.2fr_1fr_60px] gap-8 border-b border-slate-100 pb-6 mb-4 px-6">
-                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-left">Meeting Title</p>
-                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-left">Date</p>
-                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-left">Attendees</p>
-                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-left">Status</p>
-                    <div></div>
+              <div className="space-y-6 pb-20 px-2 transition-all">
+                {[
+                  { title: "Weekly Sync: Marketing v Development", date: "Dec 10, 2023", duration: "25m", icon: <Mic />, tags: ["Sync", "Internal"], sentiment: "Positive" },
+                  { title: "Client Kickoff: Atlas Venture Capital", date: "Dec 08, 2023", duration: "1h 12m", icon: <Users />, tags: ["Strategy", "External"], sentiment: "Focus Required" },
+                ].map((item, i) => (
+                   <div key={i} className="bg-white rounded-4xl p-8 border border-slate-50 shadow-sm hover:shadow-2xl hover:translate-x-3 transition-all cursor-pointer group flex items-center justify-between">
+                      <div className="flex items-center gap-8 px-2 max-w-[70%]">
+                         <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition-all border border-transparent group-hover:border-blue-100">
+                            {React.cloneElement(item.icon, { size: 24, strokeWidth: 2.5 })}
+                         </div>
+                         <div className="space-y-1">
+                            <h4 className="text-lg font-black text-slate-800 tracking-tight group-hover:text-blue-600 transition-colors uppercase truncate">{item.title}</h4>
+                            <div className="flex items-center gap-4 text-[10px] font-black text-slate-300 uppercase tracking-widest mt-1">
+                               <span>{item.date}</span>
+                               <span className="w-1 h-1 bg-slate-200 rounded-full"></span>
+                               <span>{item.duration}</span>
+                            </div>
+                         </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                         {item.sentiment === "Positive" ? (
+                            <span className="bg-emerald-50 text-emerald-600 text-[9px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest border border-emerald-100">High Velocity</span>
+                         ) : (
+                            <span className="bg-amber-50 text-amber-600 text-[9px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest border border-amber-100">Needs Sync</span>
+                         )}
+                         <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <ChevronRight size={20} strokeWidth={3} />
+                         </div>
+                      </div>
+                   </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right Sidepanel Column */}
+            <aside className="space-y-10">
+              
+               {/* Search / Filter Utility */}
+               <section className="bg-white rounded-[2.8rem] p-8 shadow-sm border border-slate-50 group/search">
+                  <div className="relative mb-6">
+                    <Search size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/search:text-blue-600 transition-colors" />
+                    <input type="text" placeholder="Search insights..." className="w-full bg-slate-50 border-none rounded-2xl py-4.5 pl-14 pr-6 text-sm font-black tracking-tight placeholder:text-slate-300 focus:bg-white focus-within:ring-12 focus-within:ring-blue-50/50 transition-all outline-none shadow-inner" />
+                  </div>
+                  <div className="flex flex-wrap gap-2 px-2">
+                     {['Roadmap', 'Strategy', 'Sprint', 'AI', 'Client'].map(t => (
+                       <button key={t} className="px-4 py-2 bg-slate-50 hover:bg-blue-600 hover:text-white transition-all text-[10px] font-black uppercase tracking-widest rounded-xl text-slate-400 border border-slate-100/50">{t}</button>
+                     ))}
+                  </div>
+               </section>
+
+               {/* AI Task Extractor (Dynamic) */}
+               <section className="bg-white rounded-[2.8rem] p-10 border border-slate-50 shadow-sm relative overflow-hidden group/tasks">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50/30 rounded-full blur-3xl opacity-60"></div>
+                  
+                  <div className="flex items-center justify-between mb-10 relative z-10 transition-transform group-hover/tasks:translate-x-1">
+                     <div className="flex items-center gap-3">
+                        <Sparkles size={18} className="text-indigo-600" strokeWidth={2.5} />
+                        <h3 className="text-[18px] font-black text-slate-800 tracking-tight">AI Extractions</h3>
+                     </div>
+                     <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg">4 Items</span>
                   </div>
 
-                  {/* Grid Body */}
-                  <div className="divide-y divide-slate-50">
+                  <div className="space-y-8 relative z-10">
                     {[
-                      { title: "Weekly Sync: Growth & Marketing", sub: "4 Key Decisions", date: "Dec 12, 2023", status: "reviewed", statusColor: "bg-blue-50 text-[#2563EB]" },
-                      { title: "Security Audit: Post-Mortem", sub: "12 Action Items", date: "Dec 10, 2023", status: "processing", statusColor: "bg-indigo-50 text-indigo-600" },
-                    ].map((row, i) => (
-                      <div key={i} className="grid grid-cols-[3fr_1fr_1.2fr_1fr_60px] gap-8 py-8 px-6 group hover:bg-slate-50/50 transition-all items-center rounded-3xl">
-                        <div className="pr-6">
-                          <p className="text-[15px] font-black text-slate-800 mb-1.5 group-hover:text-[#2563EB] transition-colors">{row.title}</p>
-                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">{row.sub}</p>
-                        </div>
-                        <div className="pr-4">
-                          <p className="text-xs font-bold text-slate-500">{row.date}</p>
-                        </div>
-                        <div className="pr-4">
-                          <div className="flex -space-x-2">
-                            {[1, 2, 3].map(j => (
-                              <img key={j} src={`https://i.pravatar.cc/150?u=${i * 10 + j}`} className="w-8 h-8 rounded-full border-2 border-white shadow-sm" alt="User" />
-                            ))}
-                            <div className="w-8 h-8 rounded-full bg-slate-900 border-2 border-white flex items-center justify-center text-[9px] font-black text-white tracking-widest">+3</div>
+                      { title: 'Update PRD Document', assignee: 'Alex', priority: 'High', color: 'bg-emerald-500' },
+                      { title: 'Refactor UI Grids', assignee: 'Marcus', priority: 'Medium', color: 'bg-blue-500' },
+                      { title: 'API Beta Certification', assignee: 'Sarah', priority: 'Critical', color: 'bg-red-500' }
+                    ].map((task, i) => (
+                      <div key={i} className="group/item cursor-pointer">
+                        <div className="flex items-start gap-5">
+                          <div className={`w-3.5 h-3.5 border-4 border-white ${task.color} rounded-full shadow-sm mt-1 transition-transform group-hover/item:scale-125`}></div>
+                          <div className="flex-1 space-y-1.5 pt-0.5">
+                             <div className="flex justify-between items-center">
+                               <p className="text-[13px] font-black text-slate-800 tracking-tight group-hover/item:text-blue-600 transition-colors uppercase">{task.title}</p>
+                             </div>
+                             <div className="flex items-center justify-between text-[10px] font-bold text-slate-300 uppercase tracking-widest">
+                                <span>{task.assignee} • {task.priority}</span>
+                                <button className="opacity-0 group-hover/item:opacity-100 transition-opacity text-slate-500 hover:text-blue-600">Assign <ArrowUpRight size={10} strokeWidth={4} className="inline ml-1" /></button>
+                             </div>
                           </div>
-                        </div>
-                        <div className="pr-4">
-                          <span className={`inline-block text-[9px] font-black uppercase px-3 py-1.5 rounded-lg tracking-widest shadow-sm ${row.statusColor}`}>
-                            {row.status}
-                          </span>
-                        </div>
-                        <div className="text-right">
-                          <button className="w-10 h-10 rounded-xl bg-white border border-slate-100 text-slate-300 hover:text-[#2563EB] hover:border-blue-100 hover:shadow-sm transition-all flex items-center justify-center group/btn active:scale-90">
-                            <ExternalLink size={18} className="group-hover/btn:scale-110 transition-transform" />
-                          </button>
                         </div>
                       </div>
                     ))}
                   </div>
-                </div>
-              </section>
-            </div>
 
-            {/* Right Sidebar Column */}
-            <div className="space-y-8">
+                  <button className="w-full mt-12 py-5 bg-[#F8FAFC] hover:bg-white hover:shadow-xl hover:border hover:border-blue-100 transition-all rounded-[1.8rem] text-[11px] font-black text-slate-400 hover:text-blue-600 uppercase tracking-widest border-2 border-dashed border-slate-100">
+                     Export to project board
+                  </button>
+               </section>
 
-              {/* Process New Meeting Card */}
-              <section className="bg-white rounded-[2.5rem] p-8 border-2 border-dashed border-slate-100 hover:border-blue-200 transition-all group flex flex-col items-center text-center cursor-pointer">
-                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-[#2563EB] mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-blue-50">
-                  <Upload size={24} />
-                </div>
-                <h3 className="font-extrabold text-slate-900 mb-2">Process New Meeting</h3>
-                <p className="text-slate-400 text-xs leading-relaxed mb-8 px-4">
-                  Drag your .mp4, .wav, or .pdf notes here to generate a curated summary.
-                </p>
-                <button className="w-full py-3.5 bg-slate-50 text-slate-600 font-bold text-sm rounded-xl hover:bg-slate-100 transition-all">
-                  Select Files
-                </button>
-              </section>
-
-              {/* Efficiency Pulse Card */}
-              <section className="bg-indigo-600 bg-linear-to-br from-indigo-600 to-blue-700 rounded-[2.5rem] p-8 text-white relative overflow-hidden group shadow-xl shadow-indigo-100 isolation-auto">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl pointer-events-none"></div>
-
-                <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] mb-8 opacity-70 relative z-10">Efficiency Pulse</p>
-
-                <div className="flex items-baseline gap-2 mb-4 relative z-10">
-                  <span className="text-5xl font-extrabold tracking-tighter">84%</span>
-                  <span className="text-xs font-bold opacity-80">Finalized</span>
-                </div>
-
-                <p className="text-xs leading-relaxed opacity-80 font-medium mb-10 relative z-10">
-                  Your meetings are becoming more concise. Average duration decreased by 12m.
-                </p>
-
-                <div className="flex justify-between items-center pt-6 border-t border-white/10 relative z-10">
-                  <span className="text-[9px] font-bold uppercase tracking-widest opacity-60">Summ.</span>
-                  <span className="text-lg font-extrabold">142</span>
-                </div>
-              </section>
-
-              {/* Contextually Related */}
-              <section className="bg-gray-400 rounded-[2.5rem] p-8 border border-white">
-                <h3 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-6 px-2">Contextually Related</h3>
-                <div className="space-y-3">
-                  {[
-                    { title: "Project Alpha Roadmap", sub: "Related Project", icon: <TrendingUp className="text-indigo-600" /> },
-                    { title: "API Documentation v2", sub: "Related Resource", icon: <Files className="text-blue-600" /> },
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-center justify-between p-4 bg-white rounded-2xl hover:bg-slate-50 transition-all cursor-pointer shadow-sm group">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center">
-                          {React.cloneElement(item.icon, { size: 18 })}
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold text-slate-800">{item.title}</p>
-                          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tight">{item.sub}</p>
-                        </div>
-                      </div>
-                      <ChevronRight size={14} className="text-slate-300 group-hover:text-slate-500 group-hover:translate-x-1 transition-all" />
+               {/* Activity Sentiment Radar */}
+               <section className="bg-slate-900 rounded-[2.8rem] p-10 shadow-2xl text-white relative overflow-hidden group/sentiment">
+                  <div className="absolute top-0 right-0 w-48 h-48 bg-blue-600/20 rounded-full blur-[100px] pointer-events-none group-hover/sentiment:scale-125 transition-all duration-1000"></div>
+                  
+                  <div className="flex items-center gap-4 mb-10 relative z-10">
+                    <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-900/50">
+                       <Activity size={24} strokeWidth={2.5} />
                     </div>
-                  ))}
-                </div>
-              </section>
+                    <div>
+                      <h4 className="text-base font-black tracking-tight uppercase">Health Radar</h4>
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Workspace Sync</p>
+                    </div>
+                  </div>
 
-            </div>
+                  <div className="space-y-10 relative z-10">
+                     <div>
+                        <div className="flex justify-between items-center mb-4 text-[10px] font-black uppercase tracking-widest px-1">
+                           <span className="text-slate-400">Alignment Factor</span>
+                           <span className="text-white">92% High</span>
+                        </div>
+                        <div className="w-full h-2.5 bg-white/5 rounded-full overflow-hidden p-0.5 border border-white/5">
+                           <div className="h-full bg-blue-600 rounded-full w-[92%] shadow-[0_0_15px_rgba(37,99,235,0.4)]"></div>
+                        </div>
+                     </div>
+
+                     <div className="grid grid-cols-2 gap-6">
+                        <div className="bg-white/5 p-6 rounded-3xl border border-white/5 text-center group/mini hover:bg-white/10 transition-all">
+                           <p className="text-[32px] font-black text-white mb-2 tracking-tighter shadow-sm line-none">Pos</p>
+                           <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Sentiment</p>
+                        </div>
+                        <div className="bg-white/5 p-6 rounded-3xl border border-white/5 text-center group/mini hover:bg-white/10 transition-all">
+                           <CirclePulse />
+                           <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-2">Team Flow</p>
+                        </div>
+                     </div>
+                  </div>
+               </section>
+
+            </aside>
           </div>
         </main>
       </div>
     </div>
   );
 };
+
+/* Mini Helper Components */
+const CirclePulse = () => (
+  <div className="flex items-center justify-center pt-2 relative">
+     <div className="w-5 h-5 bg-emerald-500 rounded-full absolute animate-ping opacity-30"></div>
+     <div className="w-5 h-5 bg-emerald-500 rounded-full shadow-lg shadow-emerald-500/50 flex items-center justify-center">
+        <Check size={12} strokeWidth={4} className="text-white" />
+     </div>
+  </div>
+);
 
 export default MeetingSummaries;
