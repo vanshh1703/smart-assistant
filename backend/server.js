@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const { sequelize, Project, Task, Member, Insight, User, Session, NotificationPreference, WorkspaceMember, ProductivityTrend, AnalyticsStat, BottleneckInsight, PerformanceBenchmark, SubscriptionPlan, BillingAccount, PaymentMethod, Invoice, ActivityLog, Meeting, MeetingPivot, MeetingExtraction, MeetingAttendee } = require('./models');
+const { sequelize, Project, Task, Member, Insight, User, Session, NotificationPreference, WorkspaceMember, ProductivityTrend, AnalyticsStat, BottleneckInsight, PerformanceBenchmark, SubscriptionPlan, BillingAccount, PaymentMethod, Invoice, ActivityLog, Meeting, MeetingPivot, MeetingExtraction, MeetingAttendee, KnowledgeAsset, KnowledgeInsight, KnowledgeBaseStat } = require('./models');
 
 const app = express();
 app.use(cors());
@@ -248,6 +248,40 @@ app.get('/api/meetings', async (req, res) => {
       order: [['createdAt', 'DESC']]
     });
     res.json(meetings);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- Analytics Routes ---
+app.get('/api/analytics', async (req, res) => {
+  try {
+    const trends = await ProductivityTrend.findAll({ order: [['id', 'ASC']] });
+    const stat = await AnalyticsStat.findOne();
+    const bottlenecks = await BottleneckInsight.findAll();
+    const benchmarks = await PerformanceBenchmark.findAll();
+
+    res.json({
+      trends,
+      stat,
+      bottlenecks,
+      benchmarks
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- Knowledge Base Routes ---
+app.get('/api/knowledge', async (req, res) => {
+  try {
+    const assets = await KnowledgeAsset.findAll({
+      include: [{ model: KnowledgeInsight, as: 'insight' }],
+      order: [['createdAt', 'DESC']]
+    });
+    const stats = await KnowledgeBaseStat.findOne();
+    
+    res.json({ assets, stats });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

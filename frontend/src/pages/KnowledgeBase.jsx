@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import { 
@@ -26,6 +26,37 @@ import {
 const KnowledgeBase = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
+  const [data, setData] = useState({ assets: [], stats: null });
+  const [loading, setLoading] = useState(true);
+  const [activeAsset, setActiveAsset] = useState(null);
+
+  useEffect(() => {
+    const fetchKnowledge = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/knowledge');
+        if (!res.ok) throw new Error('Failed to fetch knowledge base');
+        const json = await res.json();
+        setData(json);
+        if (json.assets.length > 0) {
+          setActiveAsset(json.assets[0]);
+        }
+      } catch (err) {
+        console.error('Error fetching knowledge:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchKnowledge();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex bg-[#F8FAFC] min-h-screen items-center justify-center font-black text-slate-400 uppercase tracking-[0.5em]">
+        Neural Sync...
+      </div>
+    );
+  }
 
   return (
     <div className="flex bg-[#F8FAFC] min-h-screen font-sans text-slate-900 relative overflow-x-hidden">
@@ -89,31 +120,37 @@ const KnowledgeBase = () => {
               </div>
 
               <div className="space-y-8">
-                {[
-                  { title: "Product_Roadmap_2024_v2.pdf", meta: "Modified 2 days ago • 4.2 MB", match: "98% Match", color: "bg-blue-600 shadow-blue-100", icon: <FileText /> },
-                  { title: "Client_Feedback_Synthesis.docx", meta: "Modified 5 hours ago • 1.1 MB", match: "82% Match", color: "bg-indigo-600 shadow-indigo-100", icon: <FileText /> },
-                  { title: "Workspace_Architecture_Diagram.png", meta: "Uploaded Oct 12 • 8.5 MB", match: "75% Match", color: "bg-purple-600 shadow-purple-100", icon: <Layout /> },
-                ].map((asset, i) => (
-                  <div key={i} className="bg-white rounded-[2.8rem] p-10 border border-slate-50 shadow-sm hover:shadow-2xl hover:translate-x-3 transition-all cursor-pointer group relative overflow-hidden">
-                    <div className="flex items-start gap-8 relative z-10">
-                      <div className={`w-16 h-16 ${asset.color} text-white rounded-[1.6rem] flex items-center justify-center shrink-0 shadow-2xl transition-transform group-hover:rotate-12`}>
-                        {React.cloneElement(asset.icon, { size: 28, strokeWidth: 2.5 })}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-3">
-                          <h3 className="text-lg font-black text-slate-800 group-hover:text-blue-600 transition-colors tracking-tight uppercase">{asset.title}</h3>
-                          <span className="text-[10px] font-black uppercase tracking-widest bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg border border-blue-100 shadow-sm">
-                            {asset.match}
-                          </span>
+                {data.assets.length === 0 ? (
+                  <div className="text-center py-20 text-slate-400 font-black uppercase tracking-widest bg-white rounded-[2.8rem] border border-slate-50">
+                    No Assets Indexed
+                  </div>
+                ) : (
+                  data.assets.map((asset) => (
+                    <div 
+                      key={asset.id} 
+                      className={`bg-white rounded-[2.8rem] p-10 border shadow-sm hover:shadow-2xl hover:translate-x-3 transition-all cursor-pointer group relative overflow-hidden ${activeAsset?.id === asset.id ? 'border-blue-200 ring-4 ring-blue-50/20' : 'border-slate-50'}`}
+                      onClick={() => setActiveAsset(asset)}
+                    >
+                      <div className="flex items-start gap-8 relative z-10">
+                        <div className={`w-16 h-16 ${asset.accentColor} text-white rounded-[1.6rem] flex items-center justify-center shrink-0 shadow-2xl transition-transform group-hover:rotate-12`}>
+                          {asset.iconType === 'Layout' ? <Layout size={28} strokeWidth={2.5} /> : <FileText size={28} strokeWidth={2.5} />}
                         </div>
-                        <p className="text-[12px] font-bold text-slate-400 mb-6 uppercase tracking-widest">{asset.meta}</p>
-                        <p className="text-[15px] text-slate-500 leading-relaxed font-bold opacity-80 line-clamp-2">
-                          "...the integration of AI agents into the core workspace is slated for Q3. We will prioritize <span className="text-slate-900 border-b-2 border-indigo-200">semantic search capabilities</span> to ensure users can retrieve cross-platform data instantly..."
-                        </p>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-3">
+                            <h3 className="text-lg font-black text-slate-800 group-hover:text-blue-600 transition-colors tracking-tight uppercase">{asset.title}</h3>
+                            <span className="text-[10px] font-black uppercase tracking-widest bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg border border-blue-100 shadow-sm">
+                              {asset.matchPercent}% Match
+                            </span>
+                          </div>
+                          <p className="text-[12px] font-bold text-slate-400 mb-6 uppercase tracking-widest">Modified {asset.lastModified} • {asset.size}</p>
+                          <p className="text-[15px] text-slate-500 leading-relaxed font-bold opacity-80 line-clamp-2">
+                             {asset.extractExcerpt}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
 
               {/* Expand Banner */}
@@ -155,7 +192,7 @@ const KnowledgeBase = () => {
                          <FileText size={20} strokeWidth={2.5} />
                        </div>
                        <div>
-                         <span className="text-xs font-black text-slate-800 tracking-tight block truncate max-w-[160px]">Product_Roadma...</span>
+                         <span className="text-xs font-black text-slate-800 tracking-tight block truncate max-w-[160px]">{activeAsset?.title || 'No Active Doc'}</span>
                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Active Document</span>
                        </div>
                      </div>
@@ -171,7 +208,7 @@ const KnowledgeBase = () => {
                         <span className="text-indigo-600 text-[11px] font-black uppercase tracking-[0.2em]">SPAI Insight Bar</span>
                       </div>
                       <p className="text-[14px] text-slate-600 leading-[1.8] font-bold opacity-90">
-                        This document outlines the strategic vision for the SPAI platform through the 2024 calendar year. Our focus is squarely on reducing the friction between data ingestion and actionable insights.
+                        {activeAsset?.insight?.summary || 'No detailed analysis available for this asset.'}
                       </p>
                     </div>
 
@@ -182,16 +219,16 @@ const KnowledgeBase = () => {
                         <span className="text-[10px] font-black uppercase tracking-widest">Neural Extract</span>
                       </div>
                       <p className="text-[13px] leading-relaxed font-black relative z-10 italic">
-                        "The integration of semantic search allows for querying documents using natural language questions rather than just keyword matching."
+                        {activeAsset?.insight?.neuralExtract || '"Select an asset to extract neural insights."'}
                       </p>
                     </div>
 
                     <div className="space-y-6">
                       <p className="text-xs text-slate-500 leading-relaxed font-bold uppercase tracking-tight opacity-60">
-                        Section 2 • Market Positioning
+                         {activeAsset?.insight?.sectionTitle || 'Analysis breakout'}
                       </p>
                       <p className="text-[14px] text-slate-700 leading-relaxed font-bold">
-                        We aim to differentiate from legacy document management systems by offering a "Curated Workspace" experience where the AI acts as an editorial layer.
+                         {activeAsset?.insight?.sectionText || 'Click a document index above to preview detailed workforce insights and section-by-section analysis.'}
                       </p>
                     </div>
                   </div>
@@ -221,20 +258,23 @@ const KnowledgeBase = () => {
                  <div>
                    <div className="flex justify-between items-center mb-6">
                      <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Neural Index Size</span>
-                     <span className="text-[11px] font-black text-slate-800">4.2 GB / 10 GB</span>
+                     <span className="text-[11px] font-black text-slate-800">{data.stats?.indexSizeUsed || 0} GB / {data.stats?.indexSizeTotal || 0} GB</span>
                    </div>
                    <div className="w-full h-3 bg-slate-50 rounded-full overflow-hidden p-0.5 border border-slate-50">
-                     <div className="h-full bg-blue-600 rounded-full w-[42%] shadow-lg shadow-blue-100 transition-all duration-1000 group-hover:w-[48%]"></div>
+                     <div 
+                        className="h-full bg-blue-600 rounded-full shadow-lg shadow-blue-100 transition-all duration-1000" 
+                        style={{ width: `${(data.stats?.indexSizeUsed / data.stats?.indexSizeTotal) * 100 || 0}%` }}
+                      ></div>
                    </div>
                  </div>
 
                  <div className="grid grid-cols-2 gap-6">
                    <div className="bg-[#F8FAFC] p-8 rounded-4xl border border-transparent shadow-inner text-center group/mini hover:bg-white hover:border-blue-100 transition-all">
-                     <p className="text-[32px] font-black text-slate-800 mb-1 group-mini-hover:text-blue-600 transition-colors tracking-tighter">128</p>
+                     <p className="text-[32px] font-black text-slate-800 mb-1 group-mini-hover:text-blue-600 transition-colors tracking-tighter">{data.stats?.totalAssets || 0}</p>
                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Assets</p>
                    </div>
                    <div className="bg-[#F8FAFC] p-8 rounded-4xl border border-transparent shadow-inner text-center group/mini hover:bg-white hover:border-blue-100 transition-all">
-                     <p className="text-[32px] font-black text-slate-800 mb-1 group-mini-hover:text-blue-600 transition-colors tracking-tighter">14k</p>
+                     <p className="text-[32px] font-black text-slate-800 mb-1 group-mini-hover:text-blue-600 transition-colors tracking-tighter">{data.stats?.totalEntities > 1000 ? `${(data.stats.totalEntities/1000).toFixed(0)}k` : data.stats?.totalEntities || 0}</p>
                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Entities</p>
                    </div>
                  </div>

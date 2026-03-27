@@ -20,6 +20,9 @@ const Meeting = require('./Meeting');
 const MeetingPivot = require('./MeetingPivot');
 const MeetingExtraction = require('./MeetingExtraction');
 const MeetingAttendee = require('./MeetingAttendee');
+const KnowledgeAsset = require('./KnowledgeAsset');
+const KnowledgeInsight = require('./KnowledgeInsight');
+const KnowledgeBaseStat = require('./KnowledgeBaseStat');
 
 // Associations
 Project.hasMany(Task, { as: 'tasks', onDelete: 'CASCADE' });
@@ -53,6 +56,9 @@ MeetingExtraction.belongsTo(Meeting);
 Meeting.hasMany(MeetingAttendee, { as: 'attendees', onDelete: 'CASCADE' });
 MeetingAttendee.belongsTo(Meeting);
 
+KnowledgeAsset.hasOne(KnowledgeInsight, { as: 'insight', onDelete: 'CASCADE' });
+KnowledgeInsight.belongsTo(KnowledgeAsset);
+
 module.exports = {
   sequelize,
   Project,
@@ -75,5 +81,8 @@ module.exports = {
   Meeting,
   MeetingPivot,
   MeetingExtraction,
-  MeetingAttendee
+  MeetingAttendee,
+  KnowledgeAsset,
+  KnowledgeInsight,
+  KnowledgeBaseStat
 };
