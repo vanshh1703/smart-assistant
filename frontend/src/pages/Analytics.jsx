@@ -31,7 +31,7 @@ const Analytics = () => {
   
   const [data, setData] = useState({
     trends: [],
-    stat: null,
+    stat: { overallRate: 0, completed: 0, inProgress: 0, backlog: 0 },
     bottlenecks: [],
     benchmarks: []
   });
@@ -41,11 +41,13 @@ const Analytics = () => {
     const fetchAnalytics = async () => {
       try {
         const res = await fetch('http://localhost:5000/api/analytics');
-        if (!res.ok) throw new Error('Failed to fetch data');
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
         const json = await res.json();
         setData(json);
       } catch (err) {
-        console.error(err);
+        console.error('Failed to fetch data:', err);
       } finally {
         setIsLoading(false);
       }
@@ -53,14 +55,8 @@ const Analytics = () => {
     fetchAnalytics();
   }, []);
 
-  if (isLoading) return (
-    <div className="flex bg-[#F8FAFC] min-h-screen font-sans text-slate-900 relative overflow-x-hidden">
-        <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
-        <div className="flex-1 lg:ml-64 flex flex-col items-center justify-center">
-            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-    </div>
-  );
+  // No early isLoading returns, data will be rendered based on its initial empty state
+  // and then updated when the fetch completes.
 
   return (
     <div className="flex bg-[#F8FAFC] min-h-screen font-sans text-slate-900 relative overflow-x-hidden">

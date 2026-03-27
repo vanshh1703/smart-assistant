@@ -34,11 +34,13 @@ const Settings = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const [activeTab, setActiveTab] = useState('Profile & Security');
-  const [userProfile, setUserProfile] = useState(null);
+  const [userProfile, setUserProfile] = useState({
+    firstName: '', lastName: '', email: '', title: '', role: '', accountType: '', avatar: '',
+    securityScore: 0, is2FAEnabled: false, sessions: [], workspaceMembers: [], notificationPreferences: []
+  });
   const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '' });
   const [passwordData, setPasswordData] = useState({ newPassword: '', confirmPassword: '' });
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -54,8 +56,6 @@ const Settings = () => {
         });
       } catch (err) {
         console.error(err);
-      } finally {
-        setIsLoading(false);
       }
     };
     fetchProfile();
@@ -165,17 +165,6 @@ const Settings = () => {
     }
   };
 
-  if (isLoading) return (
-    <div className="flex bg-[#F8FAFC] min-h-screen font-sans text-slate-900 relative overflow-x-hidden">
-        <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
-        <div className="flex-1 lg:ml-64 flex flex-col items-center justify-center">
-            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-    </div>
-  );
-
-  if (!userProfile) return null;
-
   return (
     <div className="flex bg-[#F8FAFC] min-h-screen font-sans text-slate-900 relative overflow-x-hidden">
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
@@ -212,6 +201,7 @@ const Settings = () => {
           <div className="space-y-10">
             
             {/* Top Section: Profile & Security Pulse */}
+            {(activeTab === 'Profile & Security') && (
             <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-10">
               
               {/* Profile Details Card */}
@@ -326,8 +316,10 @@ const Settings = () => {
                 </section>
               </div>
             </div>
+            )}
 
             {/* Team Management Section */}
+            {(activeTab === 'Team Management') && (
             <section className="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm overflow-hidden">
                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
                  <div>
@@ -378,11 +370,14 @@ const Settings = () => {
                  </div>
                </div>
             </section>
+            )}
 
             {/* Bottom Section: Notifications & Security */}
+            {(activeTab === 'Notifications' || activeTab === 'Profile & Security') && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               
               {/* Notification Preferences Card */}
+              {activeTab === 'Notifications' && (
               <section className="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm">
                 <h2 className="text-xl font-black text-slate-800 tracking-tight mb-10">Notification Preferences</h2>
                 <div className="space-y-8">
@@ -407,8 +402,10 @@ const Settings = () => {
                   ))}
                 </div>
               </section>
+              )}
 
-              {/* Security & Authentication Card */}
+              {/* Security & Authentication Card (also visible on Profile tab) */}
+              {activeTab === 'Profile & Security' && (
               <section className="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm">
                 <h2 className="text-xl font-black text-slate-800 tracking-tight mb-10">Security & Authentication</h2>
                 <div className="space-y-10">
@@ -456,8 +453,19 @@ const Settings = () => {
                   </div>
                 </div>
               </section>
+              )}
 
             </div>
+            )}
+
+            {activeTab === 'Subscription' && (
+              <div className="bg-white rounded-[2.5rem] p-12 border border-slate-50 shadow-sm flex flex-col items-center justify-center min-h-[400px]">
+                <CreditCard size={48} className="text-slate-300 mb-6" />
+                <h2 className="text-2xl font-black text-slate-800 tracking-tight">Billing & Subscriptions</h2>
+                <p className="text-slate-500 font-bold mt-2">This feature is currently under development.</p>
+              </div>
+            )}
+            
           </div>
         </main>
       </div>

@@ -26,8 +26,11 @@ const Projects = () => {
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   // --- Backend Integration State ---
-  const [project, setProject] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [project, setProject] = useState({
+    title: '', description: '', badge: '', projectIdStr: '',
+    timelineRisk: '', timelineRiskPercent: 0, codeQuality: 0, openIssues: 0, openIssuesPercent: 0,
+    velocityTitle: '', velocitySubtitle: '', tasks: [], members: [], insights: []
+  });
   const [error, setError] = useState(null);
 
   // Modal States
@@ -36,15 +39,12 @@ const Projects = () => {
 
   const fetchProjectData = async () => {
     try {
-      setIsLoading(true);
       const res = await fetch('http://localhost:5000/api/projects/default/active');
       if (!res.ok) throw new Error('Failed to fetch project data');
       const data = await res.json();
       setProject(data);
     } catch (err) {
       setError(err.message);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -81,29 +81,6 @@ const Projects = () => {
       alert(err.message);
     }
   };
-
-  if (isLoading) return (
-    <div className="flex bg-[#F8FAFC] min-h-screen font-sans text-slate-900 relative overflow-x-hidden">
-        <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
-        <div className="flex-1 lg:ml-64 flex flex-col items-center justify-center">
-            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-            <p className="mt-4 text-[11px] font-black uppercase tracking-widest text-slate-400">Loading Intelligence...</p>
-        </div>
-    </div>
-  );
-
-  if (error || !project) return (
-    <div className="flex bg-[#F8FAFC] min-h-screen font-sans text-slate-900 relative overflow-x-hidden">
-        <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
-        <div className="flex-1 lg:ml-64 flex flex-col items-center justify-center p-10 text-center">
-            <div className="w-20 h-20 bg-red-50 text-red-500 rounded-3xl flex items-center justify-center mb-6">
-                <AlertCircle size={40} />
-            </div>
-            <h2 className="text-2xl font-black text-slate-800 mb-2">System Sync Failed</h2>
-            <p className="text-slate-400 font-bold max-w-md">{error || "Could not find active projects in PostgreSQL database."}</p>
-        </div>
-    </div>
-  );
 
   // Group tasks by status
   const tasksByStatus = {
@@ -193,7 +170,7 @@ const Projects = () => {
                           <>
                             <div className="flex -space-x-2">
                               {(insight.assignedUsers || []).map((u, i) => (
-                                <img key={i} src={`https://i.pravatar.cc/100?u=insight${idx}${i}`} className="w-8 h-8 rounded-full border-2 border-white shadow-sm" alt="User" />
+                                <img key={i} src={`https://i.pravatar.cc/100?u=${u.u}`} className="w-8 h-8 rounded-full border-2 border-white shadow-sm" alt="User" />
                               ))}
                             </div>
                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5"><Clock size={12} strokeWidth={3} /> {insight.dueTime}</span>
@@ -243,7 +220,7 @@ const Projects = () => {
                          <div className="flex items-center justify-between">
                             <div className="flex -space-x-1.5">
                                {(task.assignedUsers || []).map((userObj, n) => (
-                                 <img key={n} src={`https://i.pravatar.cc/100?u=task${task.id}${n}`} className="w-7 h-7 rounded-full border-2 border-white shadow-sm" alt="Avatar" />
+                                 <img key={n} src={`https://i.pravatar.cc/100?u=${userObj.u}`} className="w-7 h-7 rounded-full border-2 border-white shadow-sm" alt="Avatar" />
                                ))}
                             </div>
                             <div className="flex items-center gap-1.5 text-slate-300 group-hover:text-slate-800 transition-all">
@@ -283,7 +260,7 @@ const Projects = () => {
                         <div className="flex justify-between items-center pt-2">
                            <div className="flex -space-x-1.5">
                               {(task.assignedUsers || []).map((userObj, n) => (
-                                <img key={n} src={`https://i.pravatar.cc/100?u=blue${n}`} className="w-7 h-7 rounded-full border-2 border-white shadow-sm" alt="Avatar" />
+                                <img key={n} src={`https://i.pravatar.cc/100?u=${userObj.u}`} className="w-7 h-7 rounded-full border-2 border-white shadow-sm" alt="Avatar" />
                               ))}
                            </div>
                            <div className="flex items-center gap-2 group-hover:translate-x-1 transition-transform">
