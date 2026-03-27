@@ -28,6 +28,40 @@ const Dashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [meetings, setMeetings] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [dashRes, meetRes] = await Promise.all([
+          fetch('http://localhost:5000/api/dashboard'),
+          fetch('http://localhost:5000/api/meetings')
+        ]);
+        const dashJson = await dashRes.json();
+        const meetJson = await meetRes.json();
+        setData(dashJson);
+        setMeetings(meetJson);
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  if (loading || !data) {
+    return (
+      <div className="flex bg-[#F8FAFC] min-h-screen items-center justify-center font-black text-slate-400 uppercase tracking-[0.5em]">
+        Neural Uplink...
+      </div>
+    );
+  }
+
+  const { summary, metrics, insights, projects, productivity, alerts } = data;
+
   // --- Calendar Logic ---
   const today = new Date();
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -80,20 +114,19 @@ const Dashboard = () => {
 
   const formatDateKey = (d) => `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`;
 
-  const mockEvents = {
-    [formatDateKey(today)]: [
-      { title: 'Client Architecture Review', time: '10:00 AM - 11:30 AM', color: 'bg-red-500', icon: <User size={12} /> },
-      { title: 'AI Training Workshop', time: '02:00 PM - 03:30 PM', color: 'bg-indigo-500', icon: <Sparkles size={12} /> },
-      { title: 'Meeting with Sarah', time: '04:00 PM - 04:45 PM', color: 'bg-blue-500', icon: <MessageSquare size={12} /> }
-    ],
-    // Add placeholders for other days to show it working
-    [formatDateKey(new Date(today.getTime() + 86400000))]: [
-        { title: 'Design System Sync', time: '11:00 AM - 12:00 PM', color: 'bg-emerald-500', icon: <Layout size={12} /> },
-        { title: 'Backend Sprint Planning', time: '03:00 PM - 04:30 PM', color: 'bg-blue-600', icon: <Zap size={12} /> }
-    ]
-  };
+  const meetingsByDate = meetings.reduce((acc, meeting) => {
+    const dateKey = meeting.date; // Assuming YYYY-MM-DD
+    if (!acc[dateKey]) acc[dateKey] = [];
+    acc[dateKey].push({
+      title: meeting.title,
+      time: meeting.time,
+      color: meeting.color || 'bg-blue-500',
+      icon: <MessageSquare size={12} />
+    });
+    return acc;
+  }, {});
 
-  const activeEvents = mockEvents[formatDateKey(selectedDate)] || [];
+  const activeEvents = meetingsByDate[formatDateKey(selectedDate)] || [];
 
   return (
     <div className="flex bg-[#F8FAFC] min-h-screen font-sans text-slate-900 relative overflow-x-hidden">
@@ -109,38 +142,32 @@ const Dashboard = () => {
             <div className="max-w-2xl">
               <h1 className="text-4xl md:text-5xl font-black text-slate-800 tracking-tighter mb-4">Good morning, Alex.</h1>
               <p className="text-slate-500 font-bold text-lg opacity-80 leading-relaxed">
-                You have <span className="text-blue-600 font-extrabold border-b-2 border-blue-100">4 active projects</span> and 1 critical deadline approaching today.
+                You have <span className="text-blue-600 font-extrabold border-b-2 border-blue-100">{summary.activeProjectsCount} active projects</span> and {summary.criticalDeadlinesCount} critical deadline approaching today.
               </p>
             </div>
             
             <div className="flex gap-6 w-full xl:w-auto">
-              {/* Mini Status Card 1 */}
-              <div className="bg-white p-6 rounded-4xl shadow-sm border border-slate-50 flex-1 xl:min-w-[180px] group hover:scale-[1.02] transition-all cursor-default">
-                <div className="flex justify-between items-start mb-4">
-                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Completion</p>
-                   <ChartPulse color="bg-blue-500" />
-                </div>
-                <div className="flex items-end gap-3">
-                  <span className="text-3xl font-black text-slate-800 tracking-tighter">84%</span>
-                  <div className="w-full bg-slate-50 h-2 rounded-full mb-2 p-0.5 overflow-hidden border border-slate-50">
-                    <div className="bg-blue-600 h-full rounded-full shadow-lg shadow-blue-100 transition-all duration-1000" style={{ width: '84%' }}></div>
+              {metrics.map((metric, i) => (
+                <div key={metric.id} className="bg-white p-6 rounded-4xl shadow-sm border border-slate-50 flex-1 xl:min-w-[180px] group hover:scale-[1.02] transition-all cursor-default">
+                  <div className="flex justify-between items-start mb-4">
+                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{metric.label}</p>
+                     <ChartPulse color={metric.color} />
+                  </div>
+                  <div className="flex items-center justify-end gap-3">
+                    {metric.trend && (
+                      <span className="text-[10px] text-emerald-600 font-black bg-emerald-50 px-2 py-1 rounded-lg flex items-center gap-1 shrink-0">
+                        <TrendingUp size={12} strokeWidth={3} /> {metric.trend}
+                      </span>
+                    )}
+                    <span className="text-3xl font-black text-slate-800 tracking-tighter">{metric.value}</span>
+                    {metric.percentage > 0 && (
+                      <div className="w-full bg-slate-50 h-2 rounded-full mb-2 p-0.5 overflow-hidden border border-slate-50 max-w-[60px]">
+                        <div className={`${metric.color} h-full rounded-full shadow-lg transition-all duration-1000`} style={{ width: `${metric.percentage}%` }}></div>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-              
-              {/* Mini Status Card 2 */}
-              <div className="bg-white p-6 rounded-4xl shadow-sm border border-slate-50 flex-1 xl:min-w-[180px] group hover:scale-[1.02] transition-all cursor-default text-right">
-                <div className="flex justify-between items-start mb-4">
-                   <ChartPulse color="bg-emerald-500" />
-                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Deep Work</p>
-                </div>
-                <div className="flex items-center justify-end gap-3">
-                  <span className="text-[10px] text-emerald-600 font-black bg-emerald-50 px-2 py-1 rounded-lg flex items-center gap-1 shrink-0">
-                    <TrendingUp size={12} strokeWidth={3} /> +12%
-                  </span>
-                  <span className="text-3xl font-black text-slate-800 tracking-tighter">4.2h</span>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 
@@ -168,36 +195,23 @@ const Dashboard = () => {
                 </div>
                 
                 <div className="space-y-6 relative z-10">
-                  {/* Recommendation Item 1 */}
-                  <div className="flex items-center gap-6 p-6 bg-white border border-slate-50 rounded-4xl shadow-[0_15px_30px_-10px_rgba(0,0,0,0.03)] hover:shadow-xl hover:scale-[1.01] transition-all cursor-pointer group">
-                    <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-indigo-100 shrink-0">
-                      <Zap size={24} fill="white" />
+                  {insights.map((insight) => (
+                    <div key={insight.id} className="flex items-center gap-6 p-6 bg-white border border-slate-50 rounded-4xl shadow-[0_15px_30px_-10px_rgba(0,0,0,0.03)] hover:shadow-xl hover:scale-[1.01] transition-all cursor-pointer group">
+                      <div className={`w-14 h-14 bg-${insight.colorTheme} rounded-2xl flex items-center justify-center text-white shadow-xl shrink-0`}>
+                        {insight.iconType === 'Zap' ? <Zap size={24} fill="white" /> : <User size={24} />}
+                      </div>
+                      <div className="flex-1 pr-6">
+                        <h3 className="text-base font-black text-slate-800 mb-1 group-hover:text-blue-600 transition-colors tracking-tight">{insight.title}</h3>
+                        <p className="text-sm font-bold text-slate-400 leading-snug">{insight.description}</p>
+                      </div>
+                      <div className="flex flex-col items-end shrink-0 gap-2">
+                         <span className={`px-2.5 py-1 ${insight.severity === 'High Risk' ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'} text-[9px] font-black uppercase tracking-widest rounded-lg`}>{insight.severity}</span>
+                         <div className="text-[11px] font-black text-blue-600 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            {insight.actionLabel} <ArrowRight size={12} strokeWidth={3} />
+                         </div>
+                      </div>
                     </div>
-                    <div className="flex-1 pr-6">
-                      <h3 className="text-base font-black text-slate-800 mb-1 group-hover:text-indigo-600 transition-colors tracking-tight">Project Phoenix: Architecture Review</h3>
-                      <p className="text-sm font-bold text-slate-400 leading-snug">Critical path bottleneck identified. Priority elevation recommended due to 24h deadline.</p>
-                    </div>
-                    <div className="flex flex-col items-end shrink-0 gap-2">
-                       <span className="px-2.5 py-1 bg-red-50 text-red-600 text-[9px] font-black uppercase tracking-widest rounded-lg">High Risk</span>
-                       <div className="text-[11px] font-black text-indigo-600 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                          Apply Fix <ArrowRight size={12} strokeWidth={3} />
-                       </div>
-                    </div>
-                  </div>
-
-                  {/* Recommendation Item 2 */}
-                  <div className="flex items-center gap-6 p-6 bg-[#F8FAFC] border border-transparent rounded-4xl hover:bg-white hover:border-slate-100 hover:shadow-xl hover:scale-[1.01] transition-all cursor-pointer group">
-                    <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-slate-400 border border-slate-100/50 shadow-sm shrink-0">
-                      <User size={24} />
-                    </div>
-                    <div className="flex-1 pr-6 text-slate-800">
-                      <h3 className="text-base font-black mb-1 group-hover:text-blue-600 transition-colors tracking-tight italic">Delegate "Icon System" to Marcus</h3>
-                      <p className="text-sm font-bold text-slate-400 leading-snug">Marcus has 4 hours of unallocated deep work today. Delegate now to maintain velocity.</p>
-                    </div>
-                    <div className="shrink-0 text-slate-300 group-hover:text-blue-600 transition-colors">
-                      <Plus size={24} strokeWidth={2.5} />
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </section>
 
@@ -215,41 +229,46 @@ const Dashboard = () => {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-8">
-                   {[
-                     { name: 'SPAI Dashboard', tasks: 12, progress: 84, color: 'bg-blue-600', icon: <Zap size={18} fill="white" /> },
-                     { name: 'Phoenix Redesign', tasks: 32, progress: 45, color: 'bg-indigo-600', icon: <Layout size={18} /> },
-                     { name: 'Analytics API', tasks: 8, progress: 92, color: 'bg-purple-600', icon: <Activity size={18} /> }
-                   ].map((proj, i) => (
-                     <div key={i} className="bg-white p-8 rounded-[2.5rem] border border-slate-50 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-xl transition-all cursor-pointer group">
-                        <div className="flex justify-between items-start mb-8">
-                           <div className={`w-12 h-12 ${proj.color} text-white rounded-2xl flex items-center justify-center shadow-lg shadow-blue-100`}>
-                             {proj.icon}
-                           </div>
-                           <button className="text-slate-300 hover:text-slate-800 transition-colors"><MoreHorizontal size={20} /></button>
-                        </div>
-                        <h3 className="text-lg font-black text-slate-800 mb-2 truncate group-hover:text-blue-600 transition-colors">{proj.name}</h3>
-                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-8">{proj.tasks} Tasks Remaining</p>
-                        
-                        <div className="space-y-3">
-                           <div className="flex justify-between items-center text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">
-                             <span>Progress</span>
-                             <span className="text-slate-800">{proj.progress}%</span>
-                           </div>
-                           <div className="w-full h-2 bg-slate-50 rounded-full overflow-hidden p-0.5 border border-slate-50">
-                              <div className={`h-full ${proj.color} rounded-full shadow-sm`} style={{ width: `${proj.progress}%` }}></div>
-                           </div>
-                        </div>
+                   {projects.slice(0, 3).map((proj, i) => {
+                     const totalTasks = proj.tasks?.length || 0;
+                     const completedTasks = proj.tasks?.filter(t => t.status === 'Completed').length || 0;
+                     const progress = totalTasks > 0 ? Math.round((completedTasks/totalTasks) * 100) : 0;
+                     const color = i === 0 ? 'bg-blue-600' : i === 1 ? 'bg-indigo-600' : 'bg-purple-600';
 
-                        <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
-                            <div className="flex -space-x-2">
-                               {[1,2,3].map(n => (
-                                 <img key={n} src={`https://i.pravatar.cc/100?u=${n+i}`} className="w-7 h-7 rounded-full border-2 border-white shadow-sm" alt="Avatar" />
-                               ))}
-                            </div>
-                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-blue-600 transition-colors flex items-center gap-1">Open <ArrowUpRight size={12} strokeWidth={3} /></span>
-                        </div>
-                     </div>
-                   ))}
+                     return (
+                      <div key={proj.id} className="bg-white p-8 rounded-[2.5rem] border border-slate-50 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-xl transition-all cursor-pointer group">
+                          <div className="flex justify-between items-start mb-8">
+                             <div className={`w-12 h-12 ${color} text-white rounded-2xl flex items-center justify-center shadow-lg shadow-blue-100`}>
+                               {i === 0 ? <Zap size={18} fill="white" /> : i === 1 ? <Layout size={18} /> : <Activity size={18} />}
+                             </div>
+                             <button className="text-slate-300 hover:text-slate-800 transition-colors"><MoreHorizontal size={20} /></button>
+                          </div>
+                          <h3 className="text-lg font-black text-slate-800 mb-2 truncate group-hover:text-blue-600 transition-colors">{proj.name}</h3>
+                          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-8">{totalTasks - completedTasks} Tasks Remaining</p>
+                          
+                          <div className="space-y-3">
+                             <div className="flex justify-between items-center text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">
+                               <span>Progress</span>
+                               <span className="text-slate-800">{progress}%</span>
+                             </div>
+                             <div className="w-full h-2 bg-slate-50 rounded-full overflow-hidden p-0.5 border border-slate-50">
+                                <div className={`h-full ${color} rounded-full shadow-sm`} style={{ width: `${progress}%` }}></div>
+                             </div>
+                          </div>
+
+                          <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
+                              <div className="flex -space-x-2">
+                                 {proj.members?.slice(0, 3).map((member, idx) => (
+                                   <div key={member.id} className="w-7 h-7 rounded-full border-2 border-white shadow-sm bg-slate-100 flex items-center justify-center text-[8px] font-black text-slate-400 overflow-hidden">
+                                      <img src={`https://i.pravatar.cc/100?u=${member.id}`} alt="avatar" />
+                                   </div>
+                                 ))}
+                              </div>
+                              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-blue-600 transition-colors flex items-center gap-1">Open <ArrowUpRight size={12} strokeWidth={3} /></span>
+                          </div>
+                       </div>
+                     );
+                   })}
                    
                    {/* Create New Project Card */}
                    <div className="bg-slate-50/50 border-2 border-dashed border-slate-200 rounded-[2.5rem] p-8 flex flex-col items-center justify-center text-center group hover:bg-white hover:border-blue-200 transition-all cursor-pointer min-h-[300px]">
@@ -276,16 +295,16 @@ const Dashboard = () => {
                   </div>
                   
                   <div className="flex items-end justify-between h-44 px-2">
-                    {[35, 60, 45, 80, 55, 70, 40].map((height, i) => (
-                      <div key={i} className="flex flex-col items-center gap-4 w-7 group">
+                    {productivity.map((item, i) => (
+                      <div key={item.id} className="flex flex-col items-center gap-4 w-7 group">
                         <div className="relative w-full h-full overflow-hidden flex items-end">
                           <div 
-                            className={`w-full rounded-2xl transition-all duration-700 delay-200 shadow-sm ${i === 3 ? 'bg-blue-600 shadow-xl shadow-blue-100' : 'bg-slate-100 hover:bg-slate-200'}`} 
-                            style={{ height: `${height}%` }}
+                            className={`w-full rounded-2xl transition-all duration-700 delay-200 shadow-sm ${item.isCurrent ? 'bg-blue-600 shadow-xl shadow-blue-100' : 'bg-slate-100 hover:bg-slate-200'}`} 
+                            style={{ height: `${item.score}%` }}
                           ></div>
                         </div>
                         <span className="text-[10px] font-black text-slate-300 uppercase tracking-tighter group-hover:text-slate-800 transition-colors">
-                          {['M', 'T', 'W', 'T', 'F', 'S', 'S'][i]}
+                          {item.day}
                         </span>
                       </div>
                     ))}
@@ -367,9 +386,8 @@ const Dashboard = () => {
                     const isSelected = isSameDay(date, selectedDate);
                     const isToday = isSameDay(date, today);
                     const isCurrentMonth = date.getMonth() === viewDate.getMonth();
-                    const dayEvents = mockEvents[formatDateKey(date)] || [];
-                    const hasEvents = dayEvents.length > 0;
-                    const eventColor = hasEvents ? dayEvents[0].color : 'bg-blue-300';
+                    const hasEvents = meetingsByDate[formatDateKey(date)]?.length > 0;
+                    const eventColor = hasEvents ? meetingsByDate[formatDateKey(date)][0].color : 'bg-blue-300';
 
                     return (
                       <div key={idx} className="flex flex-col items-center gap-0.5">
@@ -421,11 +439,8 @@ const Dashboard = () => {
                 </div>
                 
                 <div className="space-y-4">
-                  {[
-                    { label: 'Phoenix Final Specs', date: 'Today', color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-100' },
-                    { label: 'Design System Update', date: 'In 3 days', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' }
-                  ].map((alert, i) => (
-                    <div key={i} className={`flex items-center justify-between p-5 rounded-[1.8rem] ${alert.bg} border ${alert.border} group cursor-pointer transition-all hover:scale-[1.03]`}>
+                  {alerts.map((alert) => (
+                    <div key={alert.id} className={`flex items-center justify-between p-5 rounded-[1.8rem] ${alert.bg} border ${alert.border} group cursor-pointer transition-all hover:scale-[1.03]`}>
                        <div className="flex items-center gap-4">
                           <div className={`w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center ${alert.color}`}>
                              <Calendar size={18} strokeWidth={2.5} />

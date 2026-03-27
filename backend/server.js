@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const { sequelize, Project, Task, Member, Insight, User, Session, NotificationPreference, WorkspaceMember, ProductivityTrend, AnalyticsStat, BottleneckInsight, PerformanceBenchmark, SubscriptionPlan, BillingAccount, PaymentMethod, Invoice, ActivityLog, Meeting, MeetingPivot, MeetingExtraction, MeetingAttendee, KnowledgeAsset, KnowledgeInsight, KnowledgeBaseStat } = require('./models');
+const { sequelize, Project, Task, Member, Insight, User, Session, NotificationPreference, WorkspaceMember, ProductivityTrend, AnalyticsStat, BottleneckInsight, PerformanceBenchmark, SubscriptionPlan, BillingAccount, PaymentMethod, Invoice, ActivityLog, Meeting, MeetingPivot, MeetingExtraction, MeetingAttendee, KnowledgeAsset, KnowledgeInsight, KnowledgeBaseStat, DashboardMetric, DashboardInsight, DashboardAlert, ProductivityScore } = require('./models');
 
 const app = express();
 app.use(cors());
@@ -282,6 +282,42 @@ app.get('/api/knowledge', async (req, res) => {
     const stats = await KnowledgeBaseStat.findOne();
     
     res.json({ assets, stats });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- Dashboard Routes ---
+app.get('/api/dashboard', async (req, res) => {
+  try {
+    const metrics = await DashboardMetric.findAll();
+    const insights = await DashboardInsight.findAll();
+    const alerts = await DashboardAlert.findAll();
+    const productivity = await ProductivityScore.findAll({ order: [['id', 'ASC']] });
+    
+    // Aggregating Projects
+    const projects = await Project.findAll({
+      include: [
+        { model: Task, as: 'tasks' },
+        { model: Member, as: 'members' }
+      ]
+    });
+
+    const activeProjectsCount = projects.length;
+    // Mock critical deadlines for now or filter tasks
+    const criticalDeadlinesCount = await Task.count({ where: { status: 'Critical' } }) || 1;
+
+    res.json({
+      summary: {
+        activeProjectsCount,
+        criticalDeadlinesCount
+      },
+      metrics,
+      insights,
+      projects,
+      productivity,
+      alerts
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

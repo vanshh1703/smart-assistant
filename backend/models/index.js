@@ -23,6 +23,10 @@ const MeetingAttendee = require('./MeetingAttendee');
 const KnowledgeAsset = require('./KnowledgeAsset');
 const KnowledgeInsight = require('./KnowledgeInsight');
 const KnowledgeBaseStat = require('./KnowledgeBaseStat');
+const DashboardMetric = require('./DashboardMetric');
+const DashboardInsight = require('./DashboardInsight');
+const DashboardAlert = require('./DashboardAlert');
+const ProductivityScore = require('./ProductivityScore');
 
 // Associations
 Project.hasMany(Task, { as: 'tasks', onDelete: 'CASCADE' });
@@ -84,5 +88,9 @@ module.exports = {
   MeetingAttendee,
   KnowledgeAsset,
   KnowledgeInsight,
-  KnowledgeBaseStat
+  KnowledgeBaseStat,
+  DashboardMetric,
+  DashboardInsight,
+  DashboardAlert,
+  ProductivityScore
 };
