@@ -15,7 +15,7 @@ const Task = sequelize.define('Task', {
     type: DataTypes.TEXT,
   },
   status: {
-    type: DataTypes.ENUM('Review Needed', 'Active Sprint', 'Completed'),
+    type: DataTypes.ENUM('Review Needed', 'Active Sprint', 'Completed', 'Critical'),
     defaultValue: 'Review Needed',
   },
   tag: {

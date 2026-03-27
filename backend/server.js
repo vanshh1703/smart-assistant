@@ -89,7 +89,7 @@ app.patch('/api/tasks/:id/status', async (req, res) => {
     const task = await Task.findByPk(req.params.id);
     if (!task) return res.status(404).json({ error: 'Task not found' });
     const { status } = req.body;
-    const valid = ['Review Needed', 'Active Sprint', 'Completed'];
+    const valid = ['Review Needed', 'Active Sprint', 'Completed', 'Critical'];
     if (!valid.includes(status)) return res.status(400).json({ error: 'Invalid status' });
     await task.update({ status });
     res.json(task);

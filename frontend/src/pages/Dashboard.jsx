@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import { 
@@ -52,6 +52,11 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
+  // --- Calendar Logic ---
+  const today = new Date();
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [viewDate, setViewDate] = useState(new Date()); // Controls which month is displayed
+
   if (loading || !data) {
     return (
       <div className="flex bg-[#F8FAFC] min-h-screen items-center justify-center font-black text-slate-400 uppercase tracking-[0.5em]">
@@ -61,11 +66,6 @@ const Dashboard = () => {
   }
 
   const { summary, metrics, insights, projects, productivity, alerts } = data;
-
-  // --- Calendar Logic ---
-  const today = new Date();
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [viewDate, setViewDate] = useState(new Date()); // Controls which month is displayed
 
   const navMonth = (direction) => {
     const newDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + direction, 1);
