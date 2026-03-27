@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const { sequelize, Project, Task, Member } = require('./models');
+const { sequelize, Project, Task, Member, Insight, User, Session, NotificationPreference, WorkspaceMember, ProductivityTrend, AnalyticsStat, BottleneckInsight, PerformanceBenchmark } = require('./models');
 
 const app = express();
 app.use(cors());
@@ -66,6 +66,113 @@ app.post('/api/projects/:projectId/members', async (req, res) => {
     res.status(201).json(member);
   } catch (err) {
     res.status(400).json({ error: err.message });
+  }
+});
+
+// --- User / Settings Routes ---
+// Get full profile including sessions and preferences
+app.get('/api/user/profile', async (req, res) => {
+  try {
+    const user = await User.findOne({
+      include: [
+        { model: Session, as: 'sessions' },
+        { model: NotificationPreference, as: 'notificationPreferences' }
+      ]
+    });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    
+    const members = await WorkspaceMember.findAll();
+    res.json({ ...user.toJSON(), workspaceMembers: members });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Update profile details
+app.patch('/api/user/profile', async (req, res) => {
+  try {
+    const user = await User.findOne();
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    
+    await user.update({
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email
+    });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Update notification preference
+app.patch('/api/user/notifications/:id', async (req, res) => {
+  try {
+    const pref = await NotificationPreference.findByPk(req.params.id);
+    if (!pref) return res.status(404).json({ error: 'Preference not found' });
+    
+    await pref.update({ active: req.body.active });
+    res.json(pref);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Update password (mock)
+app.post('/api/user/password', async (req, res) => {
+  try {
+    const user = await User.findOne();
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    
+    // In a real app we'd verify current password and hash the new one
+    await user.update({ password: req.body.newPassword });
+    res.json({ message: 'Password updated successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Toggle 2FA
+app.patch('/api/user/2fa', async (req, res) => {
+  try {
+    const user = await User.findOne();
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    
+    await user.update({ is2FAEnabled: req.body.is2FAEnabled });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Add Workspace Member
+app.post('/api/workspace-members', async (req, res) => {
+  try {
+    const member = await WorkspaceMember.create({
+      ...req.body
+    });
+    res.status(201).json(member);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// --- Analytics Routes ---
+app.get('/api/analytics', async (req, res) => {
+  try {
+    const trends = await ProductivityTrend.findAll({ order: [['id', 'ASC']] });
+    const stat = await AnalyticsStat.findOne(); // Assuming single row for global stats
+    const bottlenecks = await BottleneckInsight.findAll({ order: [['id', 'ASC']] });
+    const benchmarks = await PerformanceBenchmark.findAll({ order: [['id', 'ASC']] });
+    
+    res.json({
+      trends,
+      stat,
+      bottlenecks,
+      benchmarks
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

@@ -1,4 +1,4 @@
-const { sequelize, Project, Task, Member, Insight } = require('./models');
+const { sequelize, Project, Task, Member, Insight, User, Session, NotificationPreference, WorkspaceMember, ProductivityTrend, AnalyticsStat, BottleneckInsight, PerformanceBenchmark } = require('./models');
 
 const seed = async () => {
   try {
@@ -89,11 +89,72 @@ const seed = async () => {
       { projectId: project.id, name: 'Jordan Doe', status: 'Idle', color: 'bg-slate-300', avatarId: 'team2' }
     ]);
 
+    // SETTINGS / GLOBAL SEED DATA
+    const user = await User.create({
+      firstName: 'Alex',
+      lastName: 'Thompson',
+      email: 'alex.t@spai-works.com',
+      password: 'hashed_password_placeholder', // Mocked
+      avatar: 'alex',
+      role: 'Admin',
+      accountType: 'Pro Account',
+      title: 'Product Lead @ SPAI',
+      securityScore: 85,
+      is2FAEnabled: false
+    });
+
+    await Session.bulkCreate([
+      { UserId: user.id, deviceName: 'MacBook Pro 16"', location: 'San Francisco, USA', status: 'Active now', iconUrl: 'Monitor' },
+      { UserId: user.id, deviceName: 'iPhone 15 Pro', location: 'San Francisco, USA', status: '2 hours ago', iconUrl: 'Smartphone' }
+    ]);
+
+    await NotificationPreference.bulkCreate([
+      { UserId: user.id, type: 'email', title: 'Email Alerts', description: 'Project updates and billing reports.', active: true, color: 'bg-[#2563EB]', icon: 'Mail', customBg: '' },
+      { UserId: user.id, type: 'push', title: 'Push Notifications', description: 'Real-time collaboration alerts.', active: true, color: 'bg-[#2563EB]', icon: 'Zap', customBg: '' },
+      { UserId: user.id, type: 'ai', title: 'AI Insight Alerts', description: 'Predictive risk & smart suggestions.', active: false, color: 'bg-[#8b5cf6]', icon: 'Sparkles', customBg: 'bg-purple-50' }
+    ]);
+
+    await WorkspaceMember.bulkCreate([
+      { name: 'Alex Thompson', email: 'alex.t@spai-works.com', role: 'Admin', roleColor: 'bg-slate-100 text-slate-700', status: 'Online', statusColor: 'text-emerald-500', avatar: 'alex' },
+      { name: 'Sarah Kolis', email: 'sarah.k@spai-works.com', role: 'Manager', roleColor: 'bg-slate-100 text-slate-700', status: 'Away', statusColor: 'text-slate-400', avatar: 'sarah' },
+      { name: 'Mila Jensen', email: 'mila.j@spai-works.com', role: 'Member', roleColor: 'bg-slate-100 text-slate-700', status: 'Online', statusColor: 'text-emerald-500', avatar: 'mila' }
+    ]);
+
+    // Seeding Analytics Data
+    await ProductivityTrend.bulkCreate([
+      { day: 'MON', completedTasks: 45, newRequests: 35 },
+      { day: 'TUE', completedTasks: 65, newRequests: 25 },
+      { day: 'WED', completedTasks: 30, newRequests: 45 },
+      { day: 'THU', completedTasks: 50, newRequests: 35 },
+      { day: 'FRI', completedTasks: 85, newRequests: 10 },
+      { day: 'SAT', completedTasks: 70, newRequests: 25 },
+      { day: 'SUN', completedTasks: 60, newRequests: 30 },
+    ]);
+
+    await AnalyticsStat.create({
+      overallRate: 84,
+      completed: 142,
+      inProgress: 48,
+      backlog: 12
+    });
+
+    await BottleneckInsight.bulkCreate([
+      { title: 'Review Cycle Lag', severity: 'High Severity', description: 'The "Final QA" stage is averaging 18.4 hrs delay per task.', actionLabel: 'Apply Fix', colorTheme: 'border-red-500 text-red-600 bg-red-50', iconName: 'Clock' },
+      { title: 'Overallocated Member', severity: 'Resource Alert', description: 'Alex Rivera is assigned 4 critical-path items simultaneously.', actionLabel: 'Redistribute', colorTheme: 'border-blue-500 text-blue-600 bg-blue-50', iconName: 'Users' },
+      { title: 'Sync Automation', severity: 'Workflow Tip', description: 'Manual standup updates takes 45 mins daily. Automating via SPAI Voice.', actionLabel: 'Enable AI', colorTheme: 'border-purple-500 text-purple-600 bg-purple-50', iconName: 'TrendingUp' }
+    ]);
+
+    await PerformanceBenchmark.bulkCreate([
+      { name: 'Jordan Doe', avatar: 'jordan', tasksCompleted: 42, focusScore: 85, color: 'bg-blue-600', avgVelocity: '3.2 days', trendRotation: 0, trendColor: 'text-blue-500' },
+      { name: 'Sarah Kim', avatar: 'sarah', tasksCompleted: 38, focusScore: 72, color: 'bg-indigo-600', avgVelocity: '2.8 days', trendRotation: 90, trendColor: 'text-blue-500' },
+      { name: 'Marcus Wong', avatar: 'marcus', tasksCompleted: 29, focusScore: 94, color: 'bg-purple-600', avgVelocity: '4.1 days', trendRotation: 180, trendColor: 'text-red-400' }
+    ]);
+
     console.log('Database seeded successfully!');
-    process.exit();
   } catch (error) {
     console.error('Error seeding database:', error);
-    process.exit(1);
+  } finally {
+    process.exit();
   }
 };
 

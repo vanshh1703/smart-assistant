@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import { 
@@ -19,9 +19,48 @@ import {
   Play
 } from 'lucide-react';
 
+const iconMap = {
+  Clock: <Clock size={22} />,
+  Users: <Users size={22} />,
+  TrendingUp: <TrendingUp size={22} />
+};
+
 const Analytics = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  
+  const [data, setData] = useState({
+    trends: [],
+    stat: null,
+    bottlenecks: [],
+    benchmarks: []
+  });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/analytics');
+        if (!res.ok) throw new Error('Failed to fetch data');
+        const json = await res.json();
+        setData(json);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchAnalytics();
+  }, []);
+
+  if (isLoading) return (
+    <div className="flex bg-[#F8FAFC] min-h-screen font-sans text-slate-900 relative overflow-x-hidden">
+        <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+        <div className="flex-1 lg:ml-64 flex flex-col items-center justify-center">
+            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+    </div>
+  );
 
   return (
     <div className="flex bg-[#F8FAFC] min-h-screen font-sans text-slate-900 relative overflow-x-hidden">
@@ -73,26 +112,18 @@ const Analytics = () => {
 
                {/* Custom Bar Chart View */}
                <div className="flex items-end justify-between h-[320px] mb-8 gap-2 px-2">
-                 {[
-                   { day: 'MON', completed: 45, requested: 35 },
-                   { day: 'TUE', completed: 65, requested: 25 },
-                   { day: 'WED', completed: 30, requested: 45 },
-                   { day: 'THU', completed: 50, requested: 35 },
-                   { day: 'FRI', completed: 85, requested: 10 },
-                   { day: 'SAT', completed: 70, requested: 25 },
-                   { day: 'SUN', completed: 60, requested: 30 },
-                 ].map((bar, i) => (
-                   <div key={i} className="flex-1 flex flex-col items-center gap-6 group/bar">
+                 {data.trends.map((bar, i) => (
+                   <div key={bar.id || i} className="flex-1 flex flex-col items-center gap-6 group/bar">
                       <div className="w-full max-w-[42px] flex flex-col-reverse h-[260px] relative">
                         {/* New Requests */}
                         <div 
-                          className="w-full bg-blue-50/80 rounded-t-xl transition-all duration-700" 
-                          style={{ height: `${bar.requested}%` }}
+                          className="w-full bg-blue-50/80 rounded-t-xl transition-all duration-700 hover:bg-blue-100" 
+                          style={{ height: `${bar.newRequests}%` }}
                         ></div>
                         {/* Completed Tasks */}
                         <div 
-                          className="w-full bg-[#1e40af] rounded-b-xl transition-all duration-700 shadow-md" 
-                          style={{ height: `${bar.completed}%` }}
+                          className="w-full bg-[#1e40af] rounded-b-xl transition-all duration-700 shadow-md hover:bg-blue-800" 
+                          style={{ height: `${bar.completedTasks}%` }}
                         ></div>
                       </div>
                       <span className="text-[10px] font-black text-slate-400 tracking-widest">{bar.day}</span>
@@ -128,17 +159,17 @@ const Analytics = () => {
                     className="transition-all duration-1000 ease-out"
                   />
                 </svg>
-                <div className="absolute flex flex-col items-center justify-center translate-y-2">
-                   <h3 className="text-6xl font-black text-slate-800 tracking-tighter">84%</h3>
+                 <div className="absolute flex flex-col items-center justify-center translate-y-2">
+                   <h3 className="text-6xl font-black text-slate-800 tracking-tighter">{data.stat?.overallRate || 0}%</h3>
                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Overall Rate</p>
                 </div>
               </div>
 
               <div className="w-full space-y-5 px-4">
                  {[
-                   { label: 'Completed', count: 142, color: 'bg-[#2563EB]' },
-                   { label: 'In Progress', count: 48, color: 'bg-indigo-600' },
-                   { label: 'Backlog', count: 12, color: 'bg-slate-200' },
+                   { label: 'Completed', count: data.stat?.completed || 0, color: 'bg-[#2563EB]' },
+                   { label: 'In Progress', count: data.stat?.inProgress || 0, color: 'bg-indigo-600' },
+                   { label: 'Backlog', count: data.stat?.backlog || 0, color: 'bg-slate-200' },
                  ].map((stat, i) => (
                    <div key={i} className="flex justify-between items-center group cursor-pointer hover:bg-slate-50 transition-all p-1 rounded-xl">
                      <div className="flex items-center gap-3">
@@ -166,24 +197,20 @@ const Analytics = () => {
 
             <div className="relative">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {[
-                  { title: 'Review Cycle Lag', severity: 'High Severity', desc: 'The "Final QA" stage is averaging 18.4 hrs delay per task.', action: 'Apply Fix', color: 'border-red-500 text-red-600 bg-red-50', icon: <Clock /> },
-                  { title: 'Overallocated Member', severity: 'Resource Alert', desc: 'Alex Rivera is assigned 4 critical-path items simultaneously.', action: 'Redistribute', color: 'border-blue-500 text-blue-600 bg-blue-50', icon: <Users /> },
-                  { title: 'Sync Automation', severity: 'Workflow Tip', desc: 'Manual standup updates takes 45 mins daily. Automating via SPAI Voice.', action: 'Enable AI', color: 'border-purple-500 text-purple-600 bg-purple-50', icon: <TrendingUp /> },
-                ].map((card, i) => (
-                  <div key={i} className={`p-8 rounded-[2.5rem] bg-white border-l-12 ${card.color.split(' ')[0]} shadow-xl shadow-slate-200/40 relative overflow-hidden group hover:-translate-y-2 transition-all duration-500 min-h-[240px]`}>
+                {data.bottlenecks.map((card) => (
+                  <div key={card.id} className={`p-8 rounded-[2.5rem] bg-white border-l-12 ${card.colorTheme.split(' ')[0]} shadow-xl shadow-slate-200/40 relative overflow-hidden group hover:-translate-y-2 transition-all duration-500 min-h-[240px]`}>
                     <div className="flex justify-between items-start mb-6">
-                      <span className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg border ${card.color}`}>{card.severity}</span>
+                      <span className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg border ${card.colorTheme}`}>{card.severity}</span>
                       <div className="text-slate-400 opacity-50 group-hover:opacity-100 transition-opacity">
-                        {React.cloneElement(card.icon, { size: 22 })}
+                        {iconMap[card.iconName] || <Clock size={22} />}
                       </div>
                     </div>
                     <h3 className="text-xl font-black text-slate-800 mb-3">{card.title}</h3>
-                    <p className="text-[13px] text-slate-500 font-medium leading-relaxed mb-10 opacity-75">{card.desc}</p>
+                    <p className="text-[13px] text-slate-500 font-medium leading-relaxed mb-10 opacity-75">{card.description}</p>
                     <div className="flex items-center justify-between">
                         <span className="text-[10px] font-black text-slate-400 hover:text-slate-800 transition-colors uppercase tracking-widest cursor-pointer">View analysis</span>
                         <button className="text-[10px] font-black text-[#2563EB] uppercase tracking-widest flex items-center gap-1 group/btn">
-                          {card.action}
+                          {card.actionLabel}
                           <ArrowUpRight size={14} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
                         </button>
                     </div>
@@ -211,30 +238,26 @@ const Analytics = () => {
 
                  {/* Table Body */}
                  <div className="space-y-2">
-                   {[
-                     { name: 'Jordan Doe', tasks: 42, score: 85, color: 'bg-blue-600', velocity: '3.2 days', trend: <ArrowUpRight className="text-blue-500" /> },
-                     { name: 'Sarah Kim', tasks: 38, score: 72, color: 'bg-indigo-600', velocity: '2.8 days', trend: <ArrowUpRight className="rotate-90 text-blue-500" /> },
-                     { name: 'Marcus Wong', tasks: 29, score: 94, color: 'bg-purple-600', velocity: '4.1 days', trend: <ArrowUpRight className="rotate-180 text-red-400" /> },
-                   ].map((row, i) => (
-                     <div key={i} className="grid grid-cols-[2fr_1fr_1.5fr_1fr_1fr] gap-8 py-5 px-8 hover:bg-slate-50 transition-all cursor-default items-center rounded-4xl group">
+                   {data.benchmarks.map((row) => (
+                     <div key={row.id} className="grid grid-cols-[2fr_1fr_1.5fr_1fr_1fr] gap-8 py-5 px-8 hover:bg-slate-50 transition-all cursor-default items-center rounded-4xl group">
                         <div className="flex items-center gap-4">
-                          <span className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-black text-slate-500 border border-white shadow-sm">{row.name.split(' ').map(n => n[0]).join('')}</span>
+                          <img src={`https://i.pravatar.cc/150?u=${row.avatar}`} alt={row.name} className="w-10 h-10 rounded-full border border-white shadow-sm" />
                           <span className="text-sm font-black text-slate-800">{row.name}</span>
                         </div>
                         <div className="text-center">
-                          <span className="text-sm font-black text-slate-700">{row.tasks}</span>
+                          <span className="text-sm font-black text-slate-700">{row.tasksCompleted}</span>
                         </div>
                         <div>
                            <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                             <div className={`h-full ${row.color} rounded-full`} style={{ width: `${row.score}%` }}></div>
+                             <div className={`h-full ${row.color} rounded-full`} style={{ width: `${row.focusScore}%` }}></div>
                            </div>
                         </div>
                         <div className="text-center">
-                          <span className="text-sm font-black text-slate-700">{row.velocity}</span>
+                          <span className="text-sm font-black text-slate-700">{row.avgVelocity}</span>
                         </div>
                         <div className="flex justify-end">
-                           <div className="text-blue-500 font-bold">
-                             {row.trend}
+                           <div className={`font-bold ${row.trendColor}`}>
+                             <ArrowUpRight className={`rotate-${row.trendRotation === 0 ? '0' : row.trendRotation}`} />
                            </div>
                         </div>
                      </div>
