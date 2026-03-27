@@ -9,7 +9,8 @@ import {
   Settings, 
   CreditCard,
   Plus,
-  X
+  X,
+  Zap
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
@@ -49,11 +50,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         <div className="flex items-center justify-between mb-10 px-2 shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-[#2563EB] rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-100">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 4L4 8L12 12L20 8L12 4Z" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M4 12L12 16L20 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M4 16L12 20L20 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <Zap size={22} fill="white" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-800 leading-none">SPAI</h1>

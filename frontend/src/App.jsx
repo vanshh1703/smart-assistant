@@ -5,6 +5,8 @@ import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
 import MeetingSummaries from "./pages/MeetingSummaries";
 import KnowledgeBase from "./pages/KnowledgeBase";
+import Analytics from "./pages/Analytics";
+import Settings from "./pages/Settings";
 
 export const App = () => {
   return (
@@ -15,6 +17,8 @@ export const App = () => {
         <Route path="/projects" element={<Projects />} />
         <Route path="/summaries" element={<MeetingSummaries />} />
         <Route path="/knowledge" element={<KnowledgeBase />} />
+        <Route path="/analytics" element={<Analytics />} />
+        <Route path="/settings" element={<Settings />} />
         <Route path="/login" element={<Login />} />
       </Routes>
     </BrowserRouter>
