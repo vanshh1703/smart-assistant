@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const { sequelize, Project, Task, Member, Insight, User, Session, NotificationPreference, WorkspaceMember, ProductivityTrend, AnalyticsStat, BottleneckInsight, PerformanceBenchmark } = require('./models');
+const { sequelize, Project, Task, Member, Insight, User, Session, NotificationPreference, WorkspaceMember, ProductivityTrend, AnalyticsStat, BottleneckInsight, PerformanceBenchmark, SubscriptionPlan, BillingAccount, PaymentMethod, Invoice } = require('./models');
 
 const app = express();
 app.use(cors());
@@ -171,6 +171,37 @@ app.get('/api/analytics', async (req, res) => {
       bottlenecks,
       benchmarks
     });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- Billing Routes ---
+app.get('/api/billing', async (req, res) => {
+  try {
+    const plans = await SubscriptionPlan.findAll({ order: [['id', 'ASC']] });
+    const account = await BillingAccount.findOne({ include: [{ model: SubscriptionPlan }] });
+    const payment = await PaymentMethod.findOne();
+    const invoices = await Invoice.findAll();
+    
+    res.json({
+      plans,
+      account,
+      payment,
+      invoices
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.patch('/api/billing/payment-method', async (req, res) => {
+  try {
+    const payment = await PaymentMethod.findOne();
+    if (!payment) return res.status(404).json({ error: 'Payment method not found' });
+    
+    await payment.update(req.body);
+    res.json(payment);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

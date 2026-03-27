@@ -11,6 +11,10 @@ const ProductivityTrend = require('./ProductivityTrend');
 const AnalyticsStat = require('./AnalyticsStat');
 const BottleneckInsight = require('./BottleneckInsight');
 const PerformanceBenchmark = require('./PerformanceBenchmark');
+const SubscriptionPlan = require('./SubscriptionPlan');
+const BillingAccount = require('./BillingAccount');
+const PaymentMethod = require('./PaymentMethod');
+const Invoice = require('./Invoice');
 
 // Associations
 Project.hasMany(Task, { as: 'tasks', onDelete: 'CASCADE' });
@@ -28,6 +32,10 @@ Session.belongsTo(User);
 User.hasMany(NotificationPreference, { as: 'notificationPreferences', onDelete: 'CASCADE' });
 NotificationPreference.belongsTo(User);
 
+// Billing Associations
+SubscriptionPlan.hasMany(BillingAccount, { as: 'accounts', onDelete: 'CASCADE' });
+BillingAccount.belongsTo(SubscriptionPlan);
+
 module.exports = {
   sequelize,
   Project,
@@ -41,5 +49,9 @@ module.exports = {
   ProductivityTrend,
   AnalyticsStat,
   BottleneckInsight,
-  PerformanceBenchmark
+  PerformanceBenchmark,
+  SubscriptionPlan,
+  BillingAccount,
+  PaymentMethod,
+  Invoice
 };

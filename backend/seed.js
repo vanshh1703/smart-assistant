@@ -1,4 +1,4 @@
-const { sequelize, Project, Task, Member, Insight, User, Session, NotificationPreference, WorkspaceMember, ProductivityTrend, AnalyticsStat, BottleneckInsight, PerformanceBenchmark } = require('./models');
+const { sequelize, Project, Task, Member, Insight, User, Session, NotificationPreference, WorkspaceMember, ProductivityTrend, AnalyticsStat, BottleneckInsight, PerformanceBenchmark, SubscriptionPlan, BillingAccount, PaymentMethod, Invoice } = require('./models');
 
 const seed = async () => {
   try {
@@ -148,6 +148,42 @@ const seed = async () => {
       { name: 'Jordan Doe', avatar: 'jordan', tasksCompleted: 42, focusScore: 85, color: 'bg-blue-600', avgVelocity: '3.2 days', trendRotation: 0, trendColor: 'text-blue-500' },
       { name: 'Sarah Kim', avatar: 'sarah', tasksCompleted: 38, focusScore: 72, color: 'bg-indigo-600', avgVelocity: '2.8 days', trendRotation: 90, trendColor: 'text-blue-500' },
       { name: 'Marcus Wong', avatar: 'marcus', tasksCompleted: 29, focusScore: 94, color: 'bg-purple-600', avgVelocity: '4.1 days', trendRotation: 180, trendColor: 'text-red-400' }
+    ]);
+
+    // Seeding Billing Data
+    const basicPlan = await SubscriptionPlan.create({
+      name: 'Basic', price: '$19', desc: 'For individual creators', features: ['5 Active Projects', 'Basic AI Summaries', '5GB Cloud Storage'], btnText: 'Downgrade', isActive: false, color: 'bg-slate-100 text-slate-500', accent: null
+    });
+    
+    const proPlan = await SubscriptionPlan.create({
+      name: 'Pro', price: '$49', desc: 'For growing startups', features: ['Unlimited Projects', '100GB Storage', 'Advanced AI Analytics', 'Priority Support'], btnText: 'Active', isActive: true, color: 'bg-blue-600 text-white', accent: 'border-blue-500 ring-4 ring-blue-50'
+    });
+
+    const entPlan = await SubscriptionPlan.create({
+      name: 'Enterprise', price: '$149', desc: 'Scale without limits', features: ['Dedicated Account Manager', 'Custom API Access', 'SOC2 Compliance Tools'], btnText: 'Upgrade Now', isActive: false, color: 'bg-slate-900 text-white', accent: null
+    });
+
+    await BillingAccount.create({
+      renewalDateStr: 'Oct 12, 2023',
+      creditsUsed: 8420,
+      creditsTotal: 10000,
+      SubscriptionPlanId: proPlan.id
+    });
+
+    await PaymentMethod.create({
+      cardType: 'Visa',
+      last4: '4242',
+      expiry: '12/25',
+      cardholderName: 'Alex Rivera',
+      billingEmail: 'billing@spai.io',
+      vatNumber: ''
+    });
+
+    await Invoice.bulkCreate([
+      { invoiceIdStr: 'INV-2023-009', dateStr: 'Sep 12, 2023', amountStr: '$49.00', status: 'Paid' },
+      { invoiceIdStr: 'INV-2023-008', dateStr: 'Aug 12, 2023', amountStr: '$49.00', status: 'Paid' },
+      { invoiceIdStr: 'INV-2023-007', dateStr: 'Jul 12, 2023', amountStr: '$49.00', status: 'Paid' },
+      { invoiceIdStr: 'INV-2023-006', dateStr: 'Jun 12, 2023', amountStr: '$19.00', status: 'Paid' }
     ]);
 
     console.log('Database seeded successfully!');
