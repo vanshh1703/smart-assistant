@@ -1,4 +1,4 @@
-const { sequelize, Project, Task, Member, Insight, User, Session, NotificationPreference, WorkspaceMember, ProductivityTrend, AnalyticsStat, BottleneckInsight, PerformanceBenchmark, SubscriptionPlan, BillingAccount, PaymentMethod, Invoice } = require('./models');
+const { sequelize, Project, Task, Member, Insight, User, Session, NotificationPreference, WorkspaceMember, ProductivityTrend, AnalyticsStat, BottleneckInsight, PerformanceBenchmark, SubscriptionPlan, BillingAccount, PaymentMethod, Invoice, ActivityLog } = require('./models');
 
 const seed = async () => {
   try {
@@ -196,11 +196,47 @@ const seed = async () => {
       { invoiceIdStr: 'INV-2023-006', dateStr: 'Jun 12, 2023', amountStr: '$19.00', status: 'Paid' }
     ]);
 
+    // --- Create Project Activity Logs ---
+    await ActivityLog.bulkCreate([
+      {
+        ProjectId: project.id,
+        action: 'Project Blueprint Finalized',
+        details: 'Initial system architecture approved by stakeholders.',
+        user: 'Alex Rivera',
+        type: 'complete',
+        timestamp: new Date(Date.now() - 3600000 * 48) // 48h ago
+      },
+      {
+        ProjectId: project.id,
+        action: 'Core Infrastructure Deploy',
+        details: 'Staging environment is live and operational.',
+        user: 'Sarah Chen',
+        type: 'update',
+        timestamp: new Date(Date.now() - 3600000 * 24) // 24h ago
+      },
+      {
+        ProjectId: project.id,
+        action: 'Design System Update',
+        details: 'Color tokens and typography scales synchronized.',
+        user: 'Jordan Smith',
+        type: 'update',
+        timestamp: new Date(Date.now() - 3600000 * 12) // 12h ago
+      },
+      {
+        ProjectId: project.id,
+        action: 'Critical Bug Resolved',
+        details: 'Fixed auth token expiration handling in mobile view.',
+        user: 'Alex Rivera',
+        type: 'alert',
+        timestamp: new Date(Date.now() - 3600000 * 2) // 2h ago
+      }
+    ]);
+
     console.log('Database seeded successfully!');
+    process.exit();
   } catch (error) {
     console.error('Error seeding database:', error);
-  } finally {
-    process.exit();
+    process.exit(1);
   }
 };
 

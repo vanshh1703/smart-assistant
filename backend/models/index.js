@@ -15,6 +15,7 @@ const SubscriptionPlan = require('./SubscriptionPlan');
 const BillingAccount = require('./BillingAccount');
 const PaymentMethod = require('./PaymentMethod');
 const Invoice = require('./Invoice');
+const ActivityLog = require('./ActivityLog');
 
 // Associations
 Project.hasMany(Task, { as: 'tasks', onDelete: 'CASCADE' });
@@ -25,6 +26,9 @@ Member.belongsTo(Project);
 
 Project.hasMany(Insight, { as: 'insights', onDelete: 'CASCADE' });
 Insight.belongsTo(Project);
+
+Project.hasMany(ActivityLog, { as: 'logs', onDelete: 'CASCADE' });
+ActivityLog.belongsTo(Project);
 
 User.hasMany(Session, { as: 'sessions', onDelete: 'CASCADE' });
 Session.belongsTo(User);
@@ -53,5 +57,6 @@ module.exports = {
   SubscriptionPlan,
   BillingAccount,
   PaymentMethod,
-  Invoice
+  Invoice,
+  ActivityLog
 };

@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const { sequelize, Project, Task, Member, Insight, User, Session, NotificationPreference, WorkspaceMember, ProductivityTrend, AnalyticsStat, BottleneckInsight, PerformanceBenchmark, SubscriptionPlan, BillingAccount, PaymentMethod, Invoice } = require('./models');
+const { sequelize, Project, Task, Member, Insight, User, Session, NotificationPreference, WorkspaceMember, ProductivityTrend, AnalyticsStat, BottleneckInsight, PerformanceBenchmark, SubscriptionPlan, BillingAccount, PaymentMethod, Invoice, ActivityLog } = require('./models');
 
 const app = express();
 app.use(cors());
@@ -15,7 +15,8 @@ app.get('/api/projects/:id', async (req, res) => {
       include: [
         { model: Task, as: 'tasks' },
         { model: Member, as: 'members' },
-        { model: Insight, as: 'insights' }
+        { model: Insight, as: 'insights' },
+        { model: ActivityLog, as: 'logs' }
       ]
     });
     if (!project) return res.status(404).json({ error: 'Project not found' });
@@ -32,7 +33,8 @@ app.get('/api/projects/default/active', async (req, res) => {
       include: [
         { model: Task, as: 'tasks' },
         { model: Member, as: 'members' },
-        { model: Insight, as: 'insights' }
+        { model: Insight, as: 'insights' },
+        { model: ActivityLog, as: 'logs' }
       ],
       order: [['createdAt', 'ASC']]
     });
@@ -66,6 +68,33 @@ app.post('/api/projects/:projectId/members', async (req, res) => {
     res.status(201).json(member);
   } catch (err) {
     res.status(400).json({ error: err.message });
+  }
+});
+
+// Update task progress percentage
+app.patch('/api/tasks/:id/progress', async (req, res) => {
+  try {
+    const task = await Task.findByPk(req.params.id);
+    if (!task) return res.status(404).json({ error: 'Task not found' });
+    const progress = Math.min(100, Math.max(0, parseInt(req.body.progress)));
+    await task.update({ progress });
+    res.json(task);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.patch('/api/tasks/:id/status', async (req, res) => {
+  try {
+    const task = await Task.findByPk(req.params.id);
+    if (!task) return res.status(404).json({ error: 'Task not found' });
+    const { status } = req.body;
+    const valid = ['Review Needed', 'Active Sprint', 'Completed'];
+    if (!valid.includes(status)) return res.status(400).json({ error: 'Invalid status' });
+    await task.update({ status });
+    res.json(task);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
