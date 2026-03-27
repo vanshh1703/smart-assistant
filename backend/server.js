@@ -48,7 +48,7 @@ app.post('/api/projects/:projectId/tasks', async (req, res) => {
   try {
     const task = await Task.create({
       ...req.body,
-      projectId: req.params.projectId
+      ProjectId: req.params.projectId
     });
     res.status(201).json(task);
   } catch (err) {
@@ -61,7 +61,7 @@ app.post('/api/projects/:projectId/members', async (req, res) => {
   try {
     const member = await Member.create({
       ...req.body,
-      projectId: req.params.projectId
+      ProjectId: req.params.projectId
     });
     res.status(201).json(member);
   } catch (err) {

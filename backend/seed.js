@@ -2,8 +2,17 @@ const { sequelize, Project, Task, Member, Insight, User, Session, NotificationPr
 
 const seed = async () => {
   try {
-    await sequelize.sync({ force: true }); // Reset DB
+    // alter:true safely updates schema without dropping existing data
+    await sequelize.sync({ alter: true });
 
+    // --- Guard: Only seed if the Project table is empty ---
+    const existingProjects = await Project.count();
+    if (existingProjects > 0) {
+      console.log(`Database already has ${existingProjects} project(s). Skipping seed to preserve existing data.`);
+      return;
+    }
+
+    console.log('Empty database detected. Running full seed...');
     const project = await Project.create({
       title: 'Neo-Bank Mobile Interface',
       description: 'Architecting the digital-first wealth management suite including real-time asset tracking and AI portfolio curation for Gen-Z investors.',
