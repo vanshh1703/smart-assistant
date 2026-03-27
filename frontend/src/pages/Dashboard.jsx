@@ -28,6 +28,54 @@ const Dashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
+  // --- Timeline Logic ---
+  const today = new Date();
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  
+  // Calculate the Monday of the current week
+  const getMonday = (d) => {
+    const date = new Date(d);
+    const day = date.getDay();
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+    return new Date(date.setDate(diff));
+  };
+
+  const [currentWeekStart, setCurrentWeekStart] = useState(getMonday(today));
+
+  const navWeek = (direction) => {
+    const newDate = new Date(currentWeekStart);
+    newDate.setDate(newDate.getDate() + (direction * 7));
+    setCurrentWeekStart(getMonday(newDate));
+  };
+
+  const daysOfWeek = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(currentWeekStart);
+    d.setDate(d.getDate() + i);
+    return d;
+  });
+
+  const isSameDay = (d1, d2) => 
+    d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getDate() === d2.getDate();
+
+  const formatDateKey = (d) => `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`;
+
+  const mockEvents = {
+    [formatDateKey(today)]: [
+      { title: 'Client Architecture Review', time: '10:00 AM - 11:30 AM', color: 'bg-red-500', icon: <User size={12} /> },
+      { title: 'AI Training Workshop', time: '02:00 PM - 03:30 PM', color: 'bg-indigo-500', icon: <Sparkles size={12} /> },
+      { title: 'Meeting with Sarah', time: '04:00 PM - 04:45 PM', color: 'bg-blue-500', icon: <MessageSquare size={12} /> }
+    ],
+    // Add placeholders for other days to show it working
+    [formatDateKey(new Date(today.getTime() + 86400000))]: [
+        { title: 'Design System Sync', time: '11:00 AM - 12:00 PM', color: 'bg-emerald-500', icon: <Layout size={12} /> },
+        { title: 'Backend Sprint Planning', time: '03:00 PM - 04:30 PM', color: 'bg-blue-600', icon: <Zap size={12} /> }
+    ]
+  };
+
+  const activeEvents = mockEvents[formatDateKey(selectedDate)] || [];
+
   return (
     <div className="flex bg-[#F8FAFC] min-h-screen font-sans text-slate-900 relative overflow-x-hidden">
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
@@ -272,10 +320,12 @@ const Dashboard = () => {
               {/* Modern Calendar / Schedule Section */}
               <section className="bg-white rounded-[2.8rem] p-8 shadow-sm border border-slate-50 overflow-hidden group">
                 <div className="flex justify-between items-center mb-8">
-                  <h3 className="text-lg font-black text-slate-800 tracking-tight">Timeline</h3>
-                  <div className="flex items-center gap-1.5 text-blue-600 cursor-pointer group/nav">
-                    <span className="text-[10px] font-black uppercase tracking-widest group-hover/nav:mr-1 transition-all">Oct 2023</span>
-                    <ChevronRight size={14} strokeWidth={3} />
+                  <h3 className="text-xl font-black text-slate-800 tracking-tight">Timeline</h3>
+                  <div className="flex items-center gap-2 group/nav cursor-pointer" onClick={() => navWeek(1)}>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-blue-600">
+                      {currentWeekStart.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                    </span>
+                    <ChevronRight size={14} strokeWidth={3} className="text-blue-600 group-hover/nav:translate-x-1 transition-transform" />
                   </div>
                 </div>
 
@@ -283,31 +333,49 @@ const Dashboard = () => {
                   {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map(d => (
                     <span key={d} className="text-[10px] font-black text-slate-300 text-center uppercase">{d}</span>
                   ))}
-                  {[9, 10, 11, 12, 13, 14, 15].map(n => (
-                    <div key={n} className="flex flex-col items-center gap-1">
-                       <span className={`w-9 h-9 flex items-center justify-center text-[12px] font-black rounded-2xl cursor-pointer transition-all ${n === 10 ? 'bg-blue-600 text-white shadow-xl shadow-blue-100 scale-110' : 'text-slate-800 hover:bg-slate-50'}`}>
-                         {n}
-                       </span>
-                       {n === 10 && <div className="w-1 h-1 rounded-full bg-blue-600"></div>}
-                       {n === 12 && <div className="w-1 h-1 rounded-full bg-red-400"></div>}
-                    </div>
-                  ))}
+                  {daysOfWeek.map((date, idx) => {
+                    const isSelected = isSameDay(date, selectedDate);
+                    const isToday = isSameDay(date, today);
+                    const dayEvents = mockEvents[formatDateKey(date)] || [];
+                    const hasEvents = dayEvents.length > 0;
+                    const eventColor = hasEvents ? dayEvents[0].color : 'bg-blue-300';
+
+                    return (
+                      <div key={idx} className="flex flex-col items-center gap-1">
+                         <span 
+                           onClick={() => setSelectedDate(date)}
+                           className={`w-9 h-9 flex items-center justify-center text-[12px] font-black rounded-2xl cursor-pointer transition-all ${
+                             isSelected ? 'bg-blue-600 text-white shadow-xl shadow-blue-100 scale-110' : 
+                             isToday ? 'bg-blue-50 text-blue-600' : 'text-slate-800 hover:bg-slate-50'
+                           }`}
+                         >
+                           {date.getDate()}
+                         </span>
+                         {hasEvents && (
+                           <div className={`w-1 h-1 rounded-full ${isSelected ? 'bg-blue-50' : eventColor}`}></div>
+                         )}
+                      </div>
+                    );
+                  })}
                 </div>
 
-                <div className="space-y-8 relative pl-2">
-                  <div className="absolute left-[7.5px] top-2 bottom-6 w-0.5 bg-slate-50 border-l border-slate-100"></div>
+                <div className="space-y-8 relative pl-2 min-h-[180px]">
+                  {activeEvents.length > 0 && <div className="absolute left-[7.5px] top-2 bottom-6 w-0.5 bg-slate-50 border-l border-slate-100"></div>}
                   
-                  {[
-                    { title: 'Client Architecture Review', time: '10:00 AM - 11:30 AM', color: 'bg-red-500', icon: <User size={12} /> },
-                    { title: 'AI Training Workshop', time: '02:00 PM - 03:30 PM', color: 'bg-indigo-500', icon: <Sparkles size={12} /> },
-                    { title: 'Meeting with Sarah', time: '04:00 PM - 04:45 PM', color: 'bg-blue-500', icon: <MessageSquare size={12} /> }
-                  ].map((inv, i) => (
-                    <div key={i} className="relative pl-8 group/item cursor-pointer">
-                      <div className={`absolute left-[-5px] top-1.5 w-3 h-3 rounded-full border-4 border-white shadow-sm transition-all group-hover/item:scale-125 ${inv.color}`}></div>
-                      <h4 className="text-sm font-black text-slate-800 tracking-tight group-hover/item:text-blue-600 transition-colors uppercase">{inv.title}</h4>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase mt-1 tracking-widest">{inv.time}</p>
+                  {activeEvents.length > 0 ? (
+                    activeEvents.map((inv, i) => (
+                      <div key={i} className="relative pl-8 group/item cursor-pointer">
+                        <div className={`absolute left-[-5px] top-1.5 w-3 h-3 rounded-full border-4 border-white shadow-sm transition-all group-hover/item:scale-125 ${inv.color}`}></div>
+                        <h4 className="text-sm font-black text-slate-800 tracking-tight group-hover/item:text-blue-600 transition-colors uppercase">{inv.title}</h4>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase mt-1 tracking-widest">{inv.time}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-10 opacity-40">
+                       <Clock size={32} className="text-slate-200 mb-3" />
+                       <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">No events scheduled</p>
                     </div>
-                  ))}
+                  )}
                 </div>
               </section>
 
