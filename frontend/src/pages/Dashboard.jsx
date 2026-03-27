@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
+import NewProjectModal from '../components/NewProjectModal';
 import { 
   Plus, 
   MoreHorizontal, 
@@ -31,24 +32,26 @@ const Dashboard = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [meetings, setMeetings] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      const [dashRes, meetRes] = await Promise.all([
+        fetch('http://localhost:5000/api/dashboard'),
+        fetch('http://localhost:5000/api/meetings')
+      ]);
+      const dashJson = await dashRes.json();
+      const meetJson = await meetRes.json();
+      setData(dashJson);
+      setMeetings(meetJson);
+    } catch (err) {
+      console.error('Error fetching dashboard data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [dashRes, meetRes] = await Promise.all([
-          fetch('http://localhost:5000/api/dashboard'),
-          fetch('http://localhost:5000/api/meetings')
-        ]);
-        const dashJson = await dashRes.json();
-        const meetJson = await meetRes.json();
-        setData(dashJson);
-        setMeetings(meetJson);
-      } catch (err) {
-        console.error('Error fetching dashboard data:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
   }, []);
 
@@ -271,7 +274,10 @@ const Dashboard = () => {
                    })}
                    
                    {/* Create New Project Card */}
-                   <div className="bg-slate-50/50 border-2 border-dashed border-slate-200 rounded-[2.5rem] p-8 flex flex-col items-center justify-center text-center group hover:bg-white hover:border-blue-200 transition-all cursor-pointer min-h-[300px]">
+                   <div 
+                     onClick={() => setIsModalOpen(true)}
+                     className="bg-slate-50/50 border-2 border-dashed border-slate-200 rounded-[2.5rem] p-8 flex flex-col items-center justify-center text-center group hover:bg-white hover:border-blue-200 transition-all cursor-pointer min-h-[300px]"
+                   >
                       <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-slate-300 border border-slate-100 mb-6 group-hover:scale-110 group-hover:text-blue-600 group-hover:shadow-lg transition-all">
                         <Plus size={32} strokeWidth={2.5} />
                       </div>
@@ -486,6 +492,12 @@ const Dashboard = () => {
           </div>
         </main>
       </div>
+
+      <NewProjectModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        onSuccess={fetchData}
+      />
     </div>
   );
 };

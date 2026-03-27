@@ -45,6 +45,20 @@ app.get('/api/projects/default/active', async (req, res) => {
   }
 });
 
+// Create Project
+app.post('/api/projects', async (req, res) => {
+  try {
+    const { title, status } = req.body;
+    const project = await Project.create({ 
+      title, 
+      status: status || 'Active' 
+    });
+    res.status(201).json(project);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 // Add Task
 app.post('/api/projects/:projectId/tasks', async (req, res) => {
   try {
