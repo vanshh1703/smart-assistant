@@ -1,4 +1,4 @@
-const { sequelize, Project, Task, Member, Insight, User, Session, NotificationPreference, WorkspaceMember, ProductivityTrend, AnalyticsStat, BottleneckInsight, PerformanceBenchmark, SubscriptionPlan, BillingAccount, PaymentMethod, Invoice, ActivityLog } = require('./models');
+const { sequelize, Project, Task, Member, Insight, User, Session, NotificationPreference, WorkspaceMember, ProductivityTrend, AnalyticsStat, BottleneckInsight, PerformanceBenchmark, SubscriptionPlan, BillingAccount, PaymentMethod, Invoice, ActivityLog, Meeting, MeetingPivot, MeetingExtraction, MeetingAttendee } = require('./models');
 
 const seed = async () => {
   try {
@@ -231,6 +231,57 @@ const seed = async () => {
         timestamp: new Date(Date.now() - 3600000 * 2) // 2h ago
       }
     ]);
+
+    // --- Create Meeting Summaries ---
+    const meeting1 = await Meeting.create({
+      title: 'Neo-Bank: Q1 Product Roadmap & Strategy Alignment',
+      dateStr: 'Dec 14, 2023',
+      duration: '45m',
+      featuredExtract: '"The integration of AI portfolio curation is 15% ahead of schedule. We are shifting from acquisition-heavy focus to \'User Retainment\' efficiency for the Q1-Q2 transition."',
+      alignmentFactor: 92,
+      sentiment: 'Positive',
+      isFeatured: true
+    });
+
+    await MeetingPivot.bulkCreate([
+      { MeetingId: meeting1.id, title: 'User Retainment Priority', body: 'Stakeholders reached consensus to deprioritize acquisition-spend by 30% in favor of developing advanced churn-prediction models.' },
+      { MeetingId: meeting1.id, title: 'API v3 Stability Launch', body: 'The backend architecture for v3 is certified stable for a closed-beta start next Tuesday. Documentation sync is pending.' },
+      { MeetingId: meeting1.id, title: 'Clean Editorial UI aesthetics', body: 'Approval granted for removing all table-lines in favor of whitespace-driven hierarchical depth across the dashboard.' }
+    ]);
+
+    await MeetingExtraction.bulkCreate([
+      { MeetingId: meeting1.id, title: 'Update PRD Document', assignee: 'Alex', priority: 'High', color: 'bg-emerald-500' },
+      { MeetingId: meeting1.id, title: 'Refactor UI Grids', assignee: 'Marcus', priority: 'Medium', color: 'bg-blue-500' },
+      { MeetingId: meeting1.id, title: 'API Beta Certification', assignee: 'Sarah', priority: 'Critical', color: 'bg-red-500' }
+    ]);
+
+    await MeetingAttendee.bulkCreate([
+      { MeetingId: meeting1.id, name: 'Alex', avatar: 'https://i.pravatar.cc/100?u=meet1' },
+      { MeetingId: meeting1.id, name: 'Sarah', avatar: 'https://i.pravatar.cc/100?u=meet2' },
+      { MeetingId: meeting1.id, name: 'Marcus', avatar: 'https://i.pravatar.cc/100?u=meet3' },
+      { MeetingId: meeting1.id, name: 'Jordan', avatar: 'https://i.pravatar.cc/100?u=meet4' }
+    ]);
+
+    // Past Meetings
+    const meeting2 = await Meeting.create({
+      title: 'Weekly Sync: Marketing v Development',
+      dateStr: 'Dec 10, 2023',
+      duration: '25m',
+      featuredExtract: 'Discussed bridging the gap between feature-release velocity and marketing-campaign cycles.',
+      alignmentFactor: 88,
+      sentiment: 'Positive',
+      isFeatured: false
+    });
+
+    const meeting3 = await Meeting.create({
+      title: 'Client Kickoff: Atlas Venture Capital',
+      dateStr: 'Dec 08, 2023',
+      duration: '1h 12m',
+      featuredExtract: 'Established communication protocols and shared product-vision for the upcoming funding round.',
+      alignmentFactor: 75,
+      sentiment: 'Focus Required',
+      isFeatured: false
+    });
 
     console.log('Database seeded successfully!');
     process.exit();

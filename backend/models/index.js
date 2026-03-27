@@ -16,6 +16,10 @@ const BillingAccount = require('./BillingAccount');
 const PaymentMethod = require('./PaymentMethod');
 const Invoice = require('./Invoice');
 const ActivityLog = require('./ActivityLog');
+const Meeting = require('./Meeting');
+const MeetingPivot = require('./MeetingPivot');
+const MeetingExtraction = require('./MeetingExtraction');
+const MeetingAttendee = require('./MeetingAttendee');
 
 // Associations
 Project.hasMany(Task, { as: 'tasks', onDelete: 'CASCADE' });
@@ -40,6 +44,15 @@ NotificationPreference.belongsTo(User);
 SubscriptionPlan.hasMany(BillingAccount, { as: 'accounts', onDelete: 'CASCADE' });
 BillingAccount.belongsTo(SubscriptionPlan);
 
+Meeting.hasMany(MeetingPivot, { as: 'pivots', onDelete: 'CASCADE' });
+MeetingPivot.belongsTo(Meeting);
+
+Meeting.hasMany(MeetingExtraction, { as: 'extractions', onDelete: 'CASCADE' });
+MeetingExtraction.belongsTo(Meeting);
+
+Meeting.hasMany(MeetingAttendee, { as: 'attendees', onDelete: 'CASCADE' });
+MeetingAttendee.belongsTo(Meeting);
+
 module.exports = {
   sequelize,
   Project,
@@ -58,5 +71,9 @@ module.exports = {
   BillingAccount,
   PaymentMethod,
   Invoice,
-  ActivityLog
+  ActivityLog,
+  Meeting,
+  MeetingPivot,
+  MeetingExtraction,
+  MeetingAttendee
 };

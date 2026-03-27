@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import {
@@ -32,6 +32,29 @@ import {
 const MeetingSummaries = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
+  const [meetings, setMeetings] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMeetings = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/meetings');
+        if (!res.ok) throw new Error('Failed to fetch meetings');
+        const data = await res.json();
+        setMeetings(data);
+      } catch (err) {
+        console.error('Error fetching meetings:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMeetings();
+  }, []);
+
+  // Use the most recent featured meeting, or just the first one as featured
+  const featuredMeeting = meetings.find(m => m.isFeatured) || meetings[0];
+  const pastMeetings = meetings.filter(m => m.id !== featuredMeeting?.id);
 
   return (
     <div className="flex bg-[#F8FAFC] min-h-screen font-sans text-slate-900 relative overflow-x-hidden">
@@ -69,7 +92,16 @@ const MeetingSummaries = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 xl:grid-cols-[1fr_400px] gap-12">
+          {loading ? (
+            <div className="flex bg-white rounded-[3rem] border border-slate-50 shadow-sm p-32 items-center justify-center font-black text-slate-300 uppercase tracking-[0.5em] animate-pulse">
+              Neural Sync in Progress...
+            </div>
+          ) : !featuredMeeting ? (
+            <div className="flex bg-white rounded-[3rem] border border-slate-50 shadow-sm p-32 items-center justify-center font-black text-slate-300 uppercase tracking-[0.5em]">
+              No Meetings Found
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 xl:grid-cols-[1fr_400px] gap-12">
             {/* Left Content Column */}
             <div className="space-y-12">
 
@@ -82,11 +114,11 @@ const MeetingSummaries = () => {
                     <span className="bg-slate-900 text-white text-[10px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest shadow-xl shadow-slate-200">Featured Analysis</span>
                     <span className="text-slate-400 text-[11px] font-black flex items-center gap-2 uppercase tracking-tight">
                       <Calendar size={14} strokeWidth={2.5} />
-                      Dec 14, 2023
+                      {featuredMeeting.dateStr}
                     </span>
                     <span className="text-slate-400 text-[11px] font-black flex items-center gap-2 uppercase tracking-tight">
                        <Clock size={14} strokeWidth={2.5} />
-                       45m Duration
+                       {featuredMeeting.duration} Duration
                     </span>
                   </div>
                   <div className="flex gap-2">
@@ -99,8 +131,8 @@ const MeetingSummaries = () => {
                   </div>
                 </div>
 
-                <h2 className="text-4xl md:text-5xl font-black text-slate-800 tracking-tighter mb-12 leading-[1.1] relative z-10">Neo-Bank: Q1 Product Roadmap & Strategy Alignment</h2>
-
+                <h2 className="text-4xl md:text-5xl font-black text-slate-800 tracking-tighter mb-12 leading-[1.1] relative z-10">{featuredMeeting.title}</h2>
+                
                 {/* Neural Extract Box */}
                 <div className="bg-indigo-600 rounded-[2.5rem] p-10 text-white relative shadow-2xl shadow-indigo-100 mb-14 overflow-hidden group/ neural">
                   <div className="absolute inset-0 bg-linear-to-br from-white/10 to-transparent"></div>
@@ -109,7 +141,7 @@ const MeetingSummaries = () => {
                     <span className="text-[10px] font-black uppercase tracking-[0.3em]">Neural Extract</span>
                   </div>
                   <p className="text-[17px] leading-relaxed font-black relative z-10 italic">
-                    "The integration of AI portfolio curation is <span className="text-indigo-200 border-b-2 border-indigo-200/50">15% ahead of schedule</span>. We are shifting from acquisition-heavy focus to 'User Retainment' efficiency for the Q1-Q2 transition."
+                    {featuredMeeting.featuredExtract}
                   </p>
                 </div>
 
@@ -119,13 +151,9 @@ const MeetingSummaries = () => {
                       <div className="h-[2px] w-12 bg-indigo-600 shrink-0"></div>
                       <h3 className="text-[12px] font-black text-slate-800 uppercase tracking-[0.3em]">Mission Critical Pivots</h3>
                    </div>
-                   <div className="space-y-10 font-bold">
-                      {[
-                        { title: 'User Retainment Priority', body: 'Stakeholders reached consensus to deprioritize acquisition-spend by 30% in favor of developing advanced churn-prediction models.' },
-                        { title: 'API v3 Stability Launch', body: 'The backend architecture for v3 is certified stable for a closed-beta start next Tuesday. Documentation sync is pending.' },
-                        { title: 'Clean Editorial UI aesthetics', body: 'Approval granted for removing all table-lines in favor of whitespace-driven hierarchical depth across the dashboard.' }
-                      ].map((pivot, i) => (
-                        <div key={i} className="flex gap-8 group">
+                    <div className="space-y-10 font-bold">
+                      {(featuredMeeting.pivots || []).map((pivot, i) => (
+                        <div key={pivot.id} className="flex gap-8 group">
                            <div className="w-10 h-10 rounded-2xl bg-[#F1F5F9] flex items-center justify-center shrink-0 shadow-sm border border-slate-50 text-slate-800 font-black text-xs transition-all group-hover:bg-blue-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-blue-100 group-hover:scale-110">
                               0{i+1}
                            </div>
@@ -135,7 +163,7 @@ const MeetingSummaries = () => {
                            </div>
                         </div>
                       ))}
-                   </div>
+                    </div>
                 </div>
 
                 <div className="pt-10 border-t border-slate-50 relative z-10 flex items-center justify-between">
@@ -150,11 +178,11 @@ const MeetingSummaries = () => {
                          <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
                       </button>
                    </div>
-                   <div className="flex -space-x-3">
-                      {[1,2,3,4].map(n => (
-                        <img key={n} src={`https://i.pravatar.cc/100?u=meet${n}`} className="w-9 h-9 rounded-full border-4 border-white shadow-sm ring-1 ring-slate-100" alt="Attendee" />
+                    <div className="flex -space-x-3">
+                      {(featuredMeeting.attendees || []).map((att) => (
+                        <img key={att.id} src={att.avatar} className="w-9 h-9 rounded-full border-4 border-white shadow-sm ring-1 ring-slate-100" alt={att.name} />
                       ))}
-                   </div>
+                    </div>
                 </div>
               </section>
 
@@ -168,19 +196,16 @@ const MeetingSummaries = () => {
               </div>
 
               <div className="space-y-6 pb-20 px-2 transition-all">
-                {[
-                  { title: "Weekly Sync: Marketing v Development", date: "Dec 10, 2023", duration: "25m", icon: <Mic />, tags: ["Sync", "Internal"], sentiment: "Positive" },
-                  { title: "Client Kickoff: Atlas Venture Capital", date: "Dec 08, 2023", duration: "1h 12m", icon: <Users />, tags: ["Strategy", "External"], sentiment: "Focus Required" },
-                ].map((item, i) => (
-                   <div key={i} className="bg-white rounded-4xl p-8 border border-slate-50 shadow-sm hover:shadow-2xl hover:translate-x-3 transition-all cursor-pointer group flex items-center justify-between">
+                {pastMeetings.map((item) => (
+                   <div key={item.id} className="bg-white rounded-4xl p-8 border border-slate-50 shadow-sm hover:shadow-2xl hover:translate-x-3 transition-all cursor-pointer group flex items-center justify-between" onClick={() => { /* Potential to swap featured */ }}>
                       <div className="flex items-center gap-8 px-2 max-w-[70%]">
                          <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition-all border border-transparent group-hover:border-blue-100">
-                            {React.cloneElement(item.icon, { size: 24, strokeWidth: 2.5 })}
+                            {item.title.toLowerCase().includes('sync') ? <Mic size={24} strokeWidth={2.5} /> : <Users size={24} strokeWidth={2.5} />}
                          </div>
                          <div className="space-y-1">
                             <h4 className="text-lg font-black text-slate-800 tracking-tight group-hover:text-blue-600 transition-colors uppercase truncate">{item.title}</h4>
                             <div className="flex items-center gap-4 text-[10px] font-black text-slate-300 uppercase tracking-widest mt-1">
-                               <span>{item.date}</span>
+                               <span>{item.dateStr}</span>
                                <span className="w-1 h-1 bg-slate-200 rounded-full"></span>
                                <span>{item.duration}</span>
                             </div>
@@ -226,16 +251,12 @@ const MeetingSummaries = () => {
                         <Sparkles size={18} className="text-indigo-600" strokeWidth={2.5} />
                         <h3 className="text-[18px] font-black text-slate-800 tracking-tight">AI Extractions</h3>
                      </div>
-                     <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg">4 Items</span>
+                     <span className="text-[10px] font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg">{(featuredMeeting.extractions || []).length} Items</span>
                   </div>
 
                   <div className="space-y-8 relative z-10">
-                    {[
-                      { title: 'Update PRD Document', assignee: 'Alex', priority: 'High', color: 'bg-emerald-500' },
-                      { title: 'Refactor UI Grids', assignee: 'Marcus', priority: 'Medium', color: 'bg-blue-500' },
-                      { title: 'API Beta Certification', assignee: 'Sarah', priority: 'Critical', color: 'bg-red-500' }
-                    ].map((task, i) => (
-                      <div key={i} className="group/item cursor-pointer">
+                    {(featuredMeeting.extractions || []).map((task) => (
+                      <div key={task.id} className="group/item cursor-pointer">
                         <div className="flex items-start gap-5">
                           <div className={`w-3.5 h-3.5 border-4 border-white ${task.color} rounded-full shadow-sm mt-1 transition-transform group-hover/item:scale-125`}></div>
                           <div className="flex-1 space-y-1.5 pt-0.5">
@@ -275,10 +296,13 @@ const MeetingSummaries = () => {
                      <div>
                         <div className="flex justify-between items-center mb-4 text-[10px] font-black uppercase tracking-widest px-1">
                            <span className="text-slate-400">Alignment Factor</span>
-                           <span className="text-white">92% High</span>
+                           <span className="text-white">{featuredMeeting.alignmentFactor}% {featuredMeeting.alignmentFactor > 80 ? 'High' : 'Normal'}</span>
                         </div>
                         <div className="w-full h-2.5 bg-white/5 rounded-full overflow-hidden p-0.5 border border-white/5">
-                           <div className="h-full bg-blue-600 rounded-full w-[92%] shadow-[0_0_15px_rgba(37,99,235,0.4)]"></div>
+                           <div 
+                             className="h-full bg-blue-600 rounded-full shadow-[0_0_15px_rgba(37,99,235,0.4)] transition-all duration-1000" 
+                             style={{ width: `${featuredMeeting.alignmentFactor}%` }}
+                           ></div>
                         </div>
                      </div>
 
@@ -296,7 +320,8 @@ const MeetingSummaries = () => {
                </section>
 
             </aside>
-          </div>
+            </div>
+          )}
         </main>
       </div>
     </div>

@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const { sequelize, Project, Task, Member, Insight, User, Session, NotificationPreference, WorkspaceMember, ProductivityTrend, AnalyticsStat, BottleneckInsight, PerformanceBenchmark, SubscriptionPlan, BillingAccount, PaymentMethod, Invoice, ActivityLog } = require('./models');
+const { sequelize, Project, Task, Member, Insight, User, Session, NotificationPreference, WorkspaceMember, ProductivityTrend, AnalyticsStat, BottleneckInsight, PerformanceBenchmark, SubscriptionPlan, BillingAccount, PaymentMethod, Invoice, ActivityLog, Meeting, MeetingPivot, MeetingExtraction, MeetingAttendee } = require('./models');
 
 const app = express();
 app.use(cors());
@@ -231,6 +231,23 @@ app.patch('/api/billing/payment-method', async (req, res) => {
     
     await payment.update(req.body);
     res.json(payment);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- Meeting Summary Routes ---
+app.get('/api/meetings', async (req, res) => {
+  try {
+    const meetings = await Meeting.findAll({
+      include: [
+        { model: MeetingPivot, as: 'pivots' },
+        { model: MeetingExtraction, as: 'extractions' },
+        { model: MeetingAttendee, as: 'attendees' }
+      ],
+      order: [['createdAt', 'DESC']]
+    });
+    res.json(meetings);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
