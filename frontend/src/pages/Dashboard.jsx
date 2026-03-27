@@ -28,36 +28,55 @@ const Dashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
-  // --- Timeline Logic ---
+  // --- Calendar Logic ---
   const today = new Date();
   const [selectedDate, setSelectedDate] = useState(new Date());
-  
-  // Calculate the Monday of the current week
-  const getMonday = (d) => {
-    const date = new Date(d);
-    const day = date.getDay();
-    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
-    return new Date(date.setDate(diff));
+  const [viewDate, setViewDate] = useState(new Date()); // Controls which month is displayed
+
+  const navMonth = (direction) => {
+    const newDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + direction, 1);
+    setViewDate(newDate);
   };
-
-  const [currentWeekStart, setCurrentWeekStart] = useState(getMonday(today));
-
-  const navWeek = (direction) => {
-    const newDate = new Date(currentWeekStart);
-    newDate.setDate(newDate.getDate() + (direction * 7));
-    setCurrentWeekStart(getMonday(newDate));
-  };
-
-  const daysOfWeek = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(currentWeekStart);
-    d.setDate(d.getDate() + i);
-    return d;
-  });
 
   const isSameDay = (d1, d2) => 
     d1.getFullYear() === d2.getFullYear() &&
     d1.getMonth() === d2.getMonth() &&
     d1.getDate() === d2.getDate();
+
+  const getDaysInMonthGrid = () => {
+    const year = viewDate.getFullYear();
+    const month = viewDate.getMonth();
+    
+    // First day of the month
+    const firstDay = new Date(year, month, 1);
+    // Day of the week for the first day (0-6, Sun-Sat)
+    // We want Mon-Sun (0-6), so:
+    let startDayOffset = firstDay.getDay() - 1;
+    if (startDayOffset < 0) startDayOffset = 6; // Sunday becomes index 6
+
+    const days = [];
+    // Previous month padding
+    const prevMonthLastDay = new Date(year, month, 0).getDate();
+    for (let i = startDayOffset; i > 0; i--) {
+      days.push(new Date(year, month - 1, prevMonthLastDay - i + 1));
+    }
+
+    // Current month days
+    const lastDay = new Date(year, month + 1, 0).getDate();
+    for (let i = 1; i <= lastDay; i++) {
+      days.push(new Date(year, month, i));
+    }
+
+    // Next month padding (to fill 42 cells)
+    const remainingCells = 42 - days.length;
+    for (let i = 1; i <= remainingCells; i++) {
+      days.push(new Date(year, month + 1, i));
+    }
+
+    return days;
+  };
+
+  const daysInGrid = getDaysInMonthGrid();
 
   const formatDateKey = (d) => `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`;
 
@@ -320,40 +339,55 @@ const Dashboard = () => {
               {/* Modern Calendar / Schedule Section */}
               <section className="bg-white rounded-[2.8rem] p-8 shadow-sm border border-slate-50 overflow-hidden group">
                 <div className="flex justify-between items-center mb-8">
-                  <h3 className="text-xl font-black text-slate-800 tracking-tight">Timeline</h3>
-                  <div className="flex items-center gap-2 group/nav cursor-pointer" onClick={() => navWeek(1)}>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-blue-600">
-                      {currentWeekStart.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                  <h3 className="text-xl font-black text-slate-800 tracking-tight">Calendar</h3>
+                  <div className="flex items-center gap-3">
+                    <button 
+                      onClick={() => navMonth(-1)}
+                      className="p-1.5 hover:bg-slate-50 rounded-lg text-slate-300 hover:text-blue-600 transition-all border border-transparent hover:border-slate-100"
+                    >
+                      <ChevronRight size={14} strokeWidth={3} className="rotate-180" />
+                    </button>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 min-w-[80px] text-center">
+                      {viewDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
                     </span>
-                    <ChevronRight size={14} strokeWidth={3} className="text-blue-600 group-hover/nav:translate-x-1 transition-transform" />
+                    <button 
+                      onClick={() => navMonth(1)}
+                      className="p-1.5 hover:bg-slate-50 rounded-lg text-slate-300 hover:text-blue-600 transition-all border border-transparent hover:border-slate-100"
+                    >
+                      <ChevronRight size={14} strokeWidth={3} />
+                    </button>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-7 gap-y-4 gap-x-2 mb-10 px-1">
+                <div className="grid grid-cols-7 gap-y-2 gap-x-1 mb-6 px-1">
                   {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map(d => (
-                    <span key={d} className="text-[10px] font-black text-slate-300 text-center uppercase">{d}</span>
+                    <span key={d} className="text-[9px] font-black text-slate-300 text-center uppercase py-2">{d}</span>
                   ))}
-                  {daysOfWeek.map((date, idx) => {
+                  {daysInGrid.map((date, idx) => {
                     const isSelected = isSameDay(date, selectedDate);
                     const isToday = isSameDay(date, today);
+                    const isCurrentMonth = date.getMonth() === viewDate.getMonth();
                     const dayEvents = mockEvents[formatDateKey(date)] || [];
                     const hasEvents = dayEvents.length > 0;
                     const eventColor = hasEvents ? dayEvents[0].color : 'bg-blue-300';
 
                     return (
-                      <div key={idx} className="flex flex-col items-center gap-1">
-                         <span 
+                      <div key={idx} className="flex flex-col items-center gap-0.5">
+                         <button 
                            onClick={() => setSelectedDate(date)}
-                           className={`w-9 h-9 flex items-center justify-center text-[12px] font-black rounded-2xl cursor-pointer transition-all ${
-                             isSelected ? 'bg-blue-600 text-white shadow-xl shadow-blue-100 scale-110' : 
-                             isToday ? 'bg-blue-50 text-blue-600' : 'text-slate-800 hover:bg-slate-50'
+                           className={`w-8 h-8 flex items-center justify-center text-[11px] font-black rounded-xl cursor-pointer transition-all ${
+                             isSelected ? 'bg-blue-600 text-white shadow-lg shadow-blue-100 scale-105' : 
+                             isToday ? 'bg-blue-50 text-blue-600 font-extrabold' : 
+                             isCurrentMonth ? 'text-slate-800 hover:bg-slate-50' : 'text-slate-200 hover:bg-slate-50/50'
                            }`}
                          >
                            {date.getDate()}
-                         </span>
-                         {hasEvents && (
-                           <div className={`w-1 h-1 rounded-full ${isSelected ? 'bg-blue-50' : eventColor}`}></div>
-                         )}
+                         </button>
+                         <div className="h-1 flex items-center justify-center gap-0.5">
+                           {hasEvents && (
+                             <div className={`w-1 h-1 rounded-full ${isSelected ? 'bg-blue-400' : eventColor}`}></div>
+                           )}
+                         </div>
                       </div>
                     );
                   })}
