@@ -18,6 +18,9 @@ const BillingAccount = sequelize.define('BillingAccount', {
   creditsTotal: {
     type: DataTypes.INTEGER,
     defaultValue: 10000
+  },
+  optimizationTip: {
+    type: DataTypes.TEXT
   }
 });
 

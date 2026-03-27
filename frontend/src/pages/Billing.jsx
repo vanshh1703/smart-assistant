@@ -16,7 +16,7 @@ const Billing = () => {
 
   // --- Structured empty states so UI never breaks before fetch ---
   const [plans, setPlans] = useState([]);
-  const [account, setAccount] = useState({ creditsUsed: 0, creditsTotal: 10000, renewalDateStr: '', SubscriptionPlan: { name: '', price: '' } });
+  const [account, setAccount] = useState({ creditsUsed: 0, creditsTotal: 1, renewalDateStr: '', optimizationTip: '', SubscriptionPlan: { name: '', price: '', features: [] } });
   const [payment, setPayment] = useState({ cardType: '', last4: '', expiry: '', cardholderName: '', billingEmail: '', vatNumber: '' });
   const [invoices, setInvoices] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
@@ -61,11 +61,8 @@ const Billing = () => {
     }
   };
 
-  // Dynamic optimization tip based on backend credit usage
+  // Compute credit usage percentage purely from backend numbers
   const usagePercent = account.creditsTotal > 0 ? Math.round((account.creditsUsed / account.creditsTotal) * 100) : 0;
-  const optimizationTip = usagePercent >= 80
-    ? `You're utilizing ${usagePercent}% of your ${account.SubscriptionPlan?.name || 'current'} Plan credits. Switching to Enterprise could save up to 15% on overage costs next month.`
-    : `You're currently at ${usagePercent}% of your credit limit. Your ${account.SubscriptionPlan?.name || 'current'} Plan is well within its usage bounds.`;
 
   return (
     <div className="flex bg-[#F8FAFC] min-h-screen font-sans text-slate-900 relative overflow-x-hidden">
@@ -142,7 +139,7 @@ const Billing = () => {
                    </div>
                    <h3 className="text-xl font-black mb-4">Optimization Tip</h3>
                    <p className="text-sm font-bold text-purple-50 leading-relaxed mb-10">
-                     {optimizationTip}
+                     {account.optimizationTip || '—'}
                    </p>
                 </div>
                 

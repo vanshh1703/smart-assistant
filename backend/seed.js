@@ -167,6 +167,7 @@ const seed = async () => {
       renewalDateStr: 'Oct 12, 2023',
       creditsUsed: 8420,
       creditsTotal: 10000,
+      optimizationTip: "You're utilizing 84% of your Pro Plan credits. Switching to the Enterprise plan could save you up to 15% on overage costs next month.",
       SubscriptionPlanId: proPlan.id
     });
 
